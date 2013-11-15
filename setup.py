@@ -13,6 +13,7 @@ setup(version='0.1',
     # package_dir directive maps package names to directories.
     # package_name:package_directory
     package_dir = {'': 'src'},
+    install_requires = ["python-mpd >= 0.3.0"],
 
 
     # Tests
@@ -23,6 +24,6 @@ setup(version='0.1',
     # any submodules and subpackages are recursively added to the
     # overall test suite.
     test_suite = 'tests.suite',
-    tests_require = 'simplejson',
+    tests_require = ['simplejson', 'mock'],
 
     )

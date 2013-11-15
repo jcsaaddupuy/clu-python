@@ -2,7 +2,7 @@
 import unittest
 from mock import Mock, MagicMock
 
-from clu.common.base import ConfigurableException
+from clu.common.base import AutoConfigurableException
 from clu.agents.mpd.mpdagent import MpdControl, MpdStatus
 
 

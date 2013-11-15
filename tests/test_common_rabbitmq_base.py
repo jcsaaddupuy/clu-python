@@ -2,7 +2,7 @@
 import unittest
 from mock import Mock, MagicMock
 
-from clu.common.base import ConfigurableException
+from clu.common.base import AutoConfigurableException
 from clu.rabbitmq.common.base import WhiteRabbit, RabbitAgent
 
 
