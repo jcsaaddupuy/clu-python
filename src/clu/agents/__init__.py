@@ -7,9 +7,9 @@ class CluAgentNotImplementedException(CluException):
 
 class CluAgent(object):
   def before_execute(self):
-    pass
+    pass # pragma: no cover
   def after_execute(self):
-    pass
+    pass # pragma: no cover
   def execute(self):
     raise CluAgentNotImplementedException("Not implemented")
   
@@ -21,9 +21,9 @@ class CluAgent(object):
 from clu.common.base import Configurable
 class ConfigurableCluAgent(Configurable):
   def before_execute(self):
-    pass
+    pass # pragma: no cover
   def after_execute(self):
-    pass
+    pass # pragma: no cover
   def execute(self):
     raise CluAgentNotImplementedException("Not implemented")
   def run(self):
