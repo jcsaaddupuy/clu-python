@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 import unittest
-from mock import Mock, MagicMock
+from mock import Mock, MagicMock, patch
 
 from clu.common.base import AutoConfigurableException
 from clu.rabbitmq.common.base import WhiteRabbit, RabbitAgent
@@ -29,20 +29,6 @@ class WhiteRabbitTestCase(unittest.TestCase):
     self.assertTrue(co.config.port == 56722)
 
 
-  
-  def test_getchannel(self):
-    config={"host":"host", "password":"password"}
-    co = WhiteRabbit(config)
-
-    #Mock the connection
-    _conn = Mock()
-    co._connection = _conn
-    
-    chan = co.channel()
-    chan = co.channel()
-    
-    _conn.assert_called_once()
-
   def test_init_with_rabbit(self):
     config={"host":"host", "port":5656, "user":"user","password":"password"}
     co = RabbitAgent(config)
@@ -52,7 +38,42 @@ class WhiteRabbitTestCase(unittest.TestCase):
     self.assertTrue(co.config.password == "password")
     self.assertTrue(co.config.port == 5656)
 
+  def test_connect(self):
+    credpatcher = patch('pika.PlainCredentials')
+    mockedcred = credpatcher.start()
+    
+    paramspatcher = patch('pika.ConnectionParameters')
+    mockedparams = paramspatcher.start()
+    
+    conpatcher = patch('pika.BlockingConnection')
+    mockedcon = conpatcher.start()
+    
+    config={"host":"host", "port":5656, "user":"user","password":"password"}
+    co = WhiteRabbit(config)
 
+    co.connect()
+    self.assertFalse(co.channel is None)
+
+
+    mockedcred.assert_called_with(config["user"], config["password"])
+    mockedparams.assert_called_with(host=config["host"], port=config["port"], credentials=mockedcred.return_value)
+    mockedcon.assert_called_with(mockedparams.return_value)
+
+    credpatcher.stop()
+    paramspatcher.stop()
+    conpatcher.stop()
+
+  def test_disconnect(self):
+    conn = Mock()
+    close = Mock()
+
+    config={"host":"host", "port":5656, "user":"user","password":"password"}
+    co = WhiteRabbit(config)
+    co.connection=conn
+    conn.close=close
+
+    co.disconnect()
+    close.assert_called()
 
 def suite():
   loader = unittest.TestLoader()

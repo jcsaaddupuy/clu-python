@@ -25,7 +25,7 @@ class MpdAgentTestCase(unittest.TestCase):
     
     self.assertTrue(mpdagent.mpd is not None)
   
-  def test_mpdagent_connect_mpd_no_password(self):
+  def test_mpdagent_connect_no_password(self):
     mpdconf={"host":"host","port":6600}
     mpdagent = MpdAgent(mpdconf)
 
@@ -33,11 +33,11 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock=Mock()
     mpdagent.mpd=mpdmock
     # Call
-    mpdagent.connect_mpd()
+    mpdagent.connect()
     # Test
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
   
-  def test_mpdagent_connect_mpd_password(self):
+  def test_mpdagent_connect_password(self):
     mpdconf={"host":"host","port":6600, "password":"password"}
     mpdagent = MpdAgent(mpdconf)
 
@@ -45,7 +45,7 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock=Mock()
     mpdagent.mpd=mpdmock
     # Call
-    mpdagent.connect_mpd()
+    mpdagent.connect()
     # Test
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
     mpdmock.password.assert_called_with(mpdconf["password"])
@@ -63,7 +63,7 @@ class MpdAgentTestCase(unittest.TestCase):
     
     # Call
     with self.assertRaises(MpdAgentException):
-      mpdagent.connect_mpd()
+      mpdagent.connect()
   
   def test_mpdagent_connect_bad_password_raises_mpdagentexception(self):
     mpdconf={"host":"badhost","port":6600, "password":"bad_pass"}
@@ -78,13 +78,13 @@ class MpdAgentTestCase(unittest.TestCase):
     
     # Call
     with self.assertRaises(MpdAgentException):
-      mpdagent.connect_mpd()
+      mpdagent.connect()
       
     # Methods call assertions
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
     mpdmock.password.assert_called_with(mpdconf["password"])
   
-  def test_mpdagent_connect_mpdexception_raises_mpdagentexception(self):
+  def test_mpdagent_connectexception_raises_mpdagentexception(self):
     mpdconf={"host":"badhost","port":6600}
     mpdagent = MpdAgent(mpdconf)
     
@@ -94,12 +94,12 @@ class MpdAgentTestCase(unittest.TestCase):
     #Mock the connect method and reaise MPDError
     connect=Mock(side_effect=MPDError())
     mpdmock.connect=connect
-
-  def test_mpdagent_run_raises_mpdagentexception(self):
-    mpdconf={"host":"host","port":6600, "password":"password"}
-    mpdagent = MpdAgent(mpdconf)
-    with self.assertRaises(CluAgentException):
-      mpdagent.run()
+    # Call
+    with self.assertRaises(MpdAgentException):
+      mpdagent.connect()
+      
+    # Methods call assertions
+    mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
 
 from clu.agents.mpd.mpdagent import MpdRmqAgent
 class MpdRmqAgentTestCase(unittest.TestCase):
@@ -107,18 +107,30 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     mpdconf={"host":"mpd.lan"}
     rmqconf={"host":"rmq.lan"}
     agent=MpdRmqAgent(mpdconf, rmqconf)
+    self.assertFalse(agent.mpdagent is None)
+    self.assertTrue(agent.mpdagent.config.host == "mpd.lan")
+    
+    self.assertFalse(agent.rmqagent is None)
+    self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
+    
+from clu.agents.mpd.mpdagent import MpdStatusAgent
+class MpdStatusAgentTestCase(unittest.TestCase):
+  def test_mpdrmq_statusagent_init(self):
+    mpdconf={"host":"mpd.lan"}
+    rmqconf={"host":"rmq.lan"}
+    agent=MpdStatusAgent(mpdconf, rmqconf)
     self.assertTrue(agent.mpdagent is not None)
     self.assertTrue(agent.mpdagent.config.host == "mpd.lan")
     
     self.assertTrue(agent.rmqagent is not None)
     self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
-    
 
 def suite():
   loader = unittest.TestLoader()
   suite = unittest.TestSuite()
   suite.addTest(loader.loadTestsFromTestCase(MpdAgentTestCase))
   suite.addTest(loader.loadTestsFromTestCase(MpdRmqAgentTestCase))
+  suite.addTest(loader.loadTestsFromTestCase(MpdStatusAgentTestCase))
   return suite
 
 

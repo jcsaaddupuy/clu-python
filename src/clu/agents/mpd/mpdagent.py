@@ -1,20 +1,22 @@
 #!/usr/bin/env python2
-from clu.agents import ConfigurableCluAgent, CluAgentException
+from clu.common.base import Configurable
+
+from clu.agents import CluAgent, CluAgentException
 from clu.rabbitmq.common.base import RabbitAgent
 import mpd
 
 class MpdAgentException(CluAgentException):
   pass
 
-class MpdAgent(ConfigurableCluAgent):
+class MpdAgent(Configurable):
   def __init__(self, config={}):
-    ConfigurableCluAgent.__init__(self, config)
+    Configurable.__init__(self, config)
     defaults={"host":"localhost", "port":6600, "password":None}
     self.__defaults__(defaults)
 
     self.mpd=mpd.MPDClient()
 
-  def connect_mpd(self):
+  def connect(self):
     try:
       self.mpd.connect(self.config.host, self.config.port)
       if self.config.password is not None:
@@ -27,11 +29,21 @@ class MpdAgent(ConfigurableCluAgent):
       raise MpdAgentException("Authentcation error", unknownex)
   
 
-class MpdRmqAgent(object):
+class MpdRmqAgent(CluAgent):
   def __init__(self, mpdconf={}, rmqconf={}):
     self.mpdagent=MpdAgent(mpdconf)
     self.rmqagent=RabbitAgent(rmqconf)
 
+    self.mpdclient=self.mpdagent.mpd
+    self.rmqclient=self.rmqagent.rabbit
+    
+  def before_execute(self):
+    self.mpdagent.connect()
+    self.rmqagent.connect()
+
+  def after_execute(self):
+    self.mpdagent.disconnect()
+    self.rmqagent.disconnect()
 
 class MpdControlAgent(MpdRmqAgent):
   def __init__(self, mpdconf={}, rmqconf={}):

@@ -10,23 +10,19 @@ class WhiteRabbit(Configurable):
     defaults={"host":"localhost", "port":5672, "user":"guest", "password":"guest"}
     self.__defaults__(defaults)
 
-    self._connection=None
     self._connectionParams = None
-    self._channel = None
+    self.connection=None
+    self.channel = None
 
-    self.__init_connection_params__()
   
-  def __init_connection_params__(self):
-    self._connectionParams= pika.ConnectionParameters(self.config.host)
+  def connect(self):
+    cred=pika.PlainCredentials(self.config.user, self.config.password)
+    params= pika.ConnectionParameters(host=self.config.host, port=self.config.port, credentials=cred)
+    self.connection = pika.BlockingConnection(params)
+    self.channel = self.connection.channel()
   
-  def connection(self):
-    if self._connection is None:
-      if self._connectionParams is not None:
-        self._connection = pika.BlockingConnection(self._connectionParams)
-    return self._connection
-
-  def channel(self):
-    return self.connection().channel()
+  def disconnect(self):
+    self.connection.close()
 
 
 
