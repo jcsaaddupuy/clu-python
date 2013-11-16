@@ -1,7 +1,8 @@
 #!/usr/bin/env python                                                                                                                                        
 from setuptools import setup, find_packages
 
-setup(version='0.1',
+setup(name='clu',
+    version='0.1',
     description='CLU home automation system',
     author='JC',
     # Package structure

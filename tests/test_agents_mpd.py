@@ -3,11 +3,11 @@ import unittest
 from mock import Mock, MagicMock
 
 from clu.common.base import AutoConfigurableException
-from clu.agents.mpd.mpdagent import MpdAgent, MpdAgentException #,MpdControlAgent, MpdStatusAgent
+from clu.agents import CluAgentException
+from clu.agents.mpd.mpdagent import MpdAgent, MpdAgentException
+from mpd import ConnectionError, CommandError, MPDError
 
-from mpd import ConnectionError, CommandError
-
-class MpdAgentsTestCase(unittest.TestCase):
+class MpdAgentTestCase(unittest.TestCase):
 
   def test_mpdagent_init_empty_params(self):
     mpdagent = MpdAgent()
@@ -83,17 +83,42 @@ class MpdAgentsTestCase(unittest.TestCase):
     # Methods call assertions
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
     mpdmock.password.assert_called_with(mpdconf["password"])
+  
+  def test_mpdagent_connect_mpdexception_raises_mpdagentexception(self):
+    mpdconf={"host":"badhost","port":6600}
+    mpdagent = MpdAgent(mpdconf)
+    
+    #Mock the mpd client
+    mpdmock=Mock()
+    mpdagent.mpd=mpdmock
+    #Mock the connect method and reaise MPDError
+    connect=Mock(side_effect=MPDError())
+    mpdmock.connect=connect
 
   def test_mpdagent_run_raises_mpdagentexception(self):
     mpdconf={"host":"host","port":6600, "password":"password"}
     mpdagent = MpdAgent(mpdconf)
-    with self.assertRaises(MpdAgentException):
+    with self.assertRaises(CluAgentException):
       mpdagent.run()
+
+from clu.agents.mpd.mpdagent import MpdRmqAgent
+class MpdRmqAgentTestCase(unittest.TestCase):
+  def test_mpdrmq_statusagent_init(self):
+    mpdconf={"host":"mpd.lan"}
+    rmqconf={"host":"rmq.lan"}
+    agent=MpdRmqAgent(mpdconf, rmqconf)
+    self.assertTrue(agent.mpdagent is not None)
+    self.assertTrue(agent.mpdagent.config.host == "mpd.lan")
+    
+    self.assertTrue(agent.rmqagent is not None)
+    self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
+    
 
 def suite():
   loader = unittest.TestLoader()
   suite = unittest.TestSuite()
-  suite.addTest(loader.loadTestsFromTestCase(MpdAgentsTestCase))
+  suite.addTest(loader.loadTestsFromTestCase(MpdAgentTestCase))
+  suite.addTest(loader.loadTestsFromTestCase(MpdRmqAgentTestCase))
   return suite
 
 
