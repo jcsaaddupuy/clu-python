@@ -21,23 +21,23 @@ class AutoConfigurable(object):
 
     for k in myattr:
       val = myattr[k]
-      if self.__dict__.has_key(k) :
-        raise AutoConfigurableException("Name clash for '%s'"%(k))
       if type(val)==dict:
         self.__dict__[k]=AutoConfigurable(val)
       else:
         self.__dict__[k]=val
 
-  def __neededattrs__(self, needed=()):
-    for k in needed:
-      if not self.__dict__.has_key(k):
-        raise AutoConfigurableException("missing %s"%(k))
-
-  def __nonenables__(self, noneable=()):
-    for k in noneable:
-      if not self.__dict__.has_key(k):
-        self.__dict__[k]=None
 
 class Configurable(object):
   def __init__(self, config={}):
     self.config=AutoConfigurable(config)
+  
+  def __neededs__(self, needed=()):
+    for k in needed:
+      if not self.config.__dict__.has_key(k):
+        raise AutoConfigurableException("missing %s"%(k))
+
+  def __defaults__(self, defaults={}):
+    for k in defaults:
+      if not self.config.__dict__.has_key(k):
+        self.config.__dict__[k]=defaults[k]
+

@@ -12,19 +12,27 @@ class WhiteRabbitTestCase(unittest.TestCase):
     confgigurable = WhiteRabbit()
   
   def test_init_host_param(self):
-    co = WhiteRabbit(host="host")
-    self.assertTrue(co.host == "host")
-    self.assertTrue(co.password is None)
-    self.assertTrue(co.port is None)
+    config={"host":"host"}
+    co = WhiteRabbit(config)
+    self.assertTrue(co.config.host == "host")
+    self.assertTrue(co.config.user == "guest")
+    self.assertTrue(co.config.password == "guest")
+    self.assertTrue(co.config.port == 5672)
 
   def test_init_host_password_param(self):
-    co = WhiteRabbit(host="host", password="password")
-    self.assertTrue(co.host == "host")
-    self.assertTrue(co.password == "password")
-    self.assertTrue(co.port is None)
+    config={"host":"host", "password":"password", "port":56722}
+    co = WhiteRabbit(config)
+
+    self.assertTrue(co.config.host == "host")
+    self.assertTrue(co.config.user == "guest")
+    self.assertTrue(co.config.password == "password")
+    self.assertTrue(co.config.port == 56722)
+
+
   
   def test_getchannel(self):
-    co = WhiteRabbit(host="host", password="password")
+    config={"host":"host", "password":"password"}
+    co = WhiteRabbit(config)
 
     #Mock the connection
     _conn = Mock()
@@ -36,11 +44,13 @@ class WhiteRabbitTestCase(unittest.TestCase):
     _conn.assert_called_once()
 
   def test_init_with_rabbit(self):
-    co = RabbitAgent(rmq_host="host", rmq_password="password", rmq_port=5656)
+    config={"host":"host", "port":5656, "user":"user","password":"password"}
+    co = RabbitAgent(config)
     self.assertFalse(co.rabbit is None)
-    self.assertTrue(co.rabbit.host == "host")
-    self.assertTrue(co.rabbit.password == "password")
-    self.assertTrue(co.rabbit.port == 5656)
+    self.assertTrue(co.config.host == "host")
+    self.assertTrue(co.config.user == "user")
+    self.assertTrue(co.config.password == "password")
+    self.assertTrue(co.config.port == 5656)
 
 
 
@@ -51,5 +61,5 @@ def suite():
   return suite
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':# pragma: no cover
   unittest.TextTestRunner(verbosity=2).run(suite())

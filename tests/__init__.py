@@ -12,5 +12,5 @@ def suite():
     suite.addTests(test_agents_mpd.suite())
     return suite
 
-if __name__ == '__main__':
+if __name__ == '__main__':# pragma: no cover
     unittest.TextTestRunner(verbosity=2).run(suite())

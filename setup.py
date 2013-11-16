@@ -24,6 +24,6 @@ setup(version='0.1',
     # any submodules and subpackages are recursively added to the
     # overall test suite.
     test_suite = 'tests.suite',
-    tests_require = ['simplejson', 'mock'],
+    tests_require = ['simplejson', 'mock', 'coverage'],
 
     )

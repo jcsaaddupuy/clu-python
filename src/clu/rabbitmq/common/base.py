@@ -5,9 +5,10 @@ import pika
 from clu.common.base import Configurable
 
 class WhiteRabbit(Configurable):
-  def __init__(self, *args, **kwargs):
-    Configurable.__init__(self,*args, **kwargs)
-    self.__nonenables__(("host","port","password"))
+  def __init__(self, config={}):
+    Configurable.__init__(self, config)
+    defaults={"host":"localhost", "port":5672, "user":"guest", "password":"guest"}
+    self.__defaults__(defaults)
 
     self._connection=None
     self._connectionParams = None
@@ -16,11 +17,11 @@ class WhiteRabbit(Configurable):
     self.__init_connection_params__()
   
   def __init_connection_params__(self):
-    self._connectionParams= pika.ConnectionParameters(self.host)
+    self._connectionParams= pika.ConnectionParameters(self.config.host)
   
   def connection(self):
     if self._connection is None:
-      if self.host is not None:
+      if self._connectionParams is not None:
         self._connection = pika.BlockingConnection(self._connectionParams)
     return self._connection
 
@@ -30,9 +31,8 @@ class WhiteRabbit(Configurable):
 
 
 class RabbitAgent(Configurable):
-  def __init__(self, *args, **kwargs):
-    Configurable.__init__(self, *args,**kwargs)
-    self.__nonenables__(("rmq_host","rmq_port","rmq_password"))
-    rabbit = WhiteRabbit(host=self.rmq_host, port=self.rmq_port, password=self.rmq_password)
+  def __init__(self, config={}):
+    Configurable.__init__(self, config)
+    rabbit = WhiteRabbit(config)
     self.rabbit = rabbit
 

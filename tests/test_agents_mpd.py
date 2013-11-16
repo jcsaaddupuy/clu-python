@@ -3,41 +3,92 @@ import unittest
 from mock import Mock, MagicMock
 
 from clu.common.base import AutoConfigurableException
-from clu.agents.mpd.mpdagent import MpdControl, MpdStatus
+from clu.agents.mpd.mpdagent import MpdAgent, MpdAgentException #,MpdControlAgent, MpdStatusAgent
 
+from mpd import ConnectionError, CommandError
 
 class MpdAgentsTestCase(unittest.TestCase):
 
-  def test_init_empty_params(self):
-    confgigurable = MpdControl()
+  def test_mpdagent_init_empty_params(self):
+    mpdagent = MpdAgent()
+    self.assertTrue(mpdagent.config.host == "localhost")
+    self.assertTrue(mpdagent.config.port == 6600)
+    self.assertTrue(mpdagent.config.password is None)
   
-  def test_init_status_full_param(self):
-    co = MpdStatus(host="host", port=6600, password="password", rmq_host="rmq_host", rmq_password="rmq_password", rmq_port=4444)
-    self.assertTrue(co.host == "host")
-    self.assertTrue(co.password == "password")
-    self.assertTrue(co.port == 6600)
+  def test_mpdagent_init_with_mpd_conf(self):
+    mpdconf={"host":"host","port":6601}
+    mpdagent = MpdAgent(mpdconf)
     
-    self.assertFalse(co.mpd is None)
+    self.assertTrue(mpdagent.config.host == "host")
+    self.assertTrue(mpdagent.config.password is None)
+    self.assertTrue(mpdagent.config.port == 6601)
     
-    self.assertFalse(co.rabbit is None)
-    self.assertTrue(co.rabbit.host == "rmq_host")
-    self.assertTrue(co.rabbit.password == "rmq_password")
-    self.assertTrue(co.rabbit.port == 4444)
+    self.assertTrue(mpdagent.mpd is not None)
+  
+  def test_mpdagent_connect_mpd_no_password(self):
+    mpdconf={"host":"host","port":6600}
+    mpdagent = MpdAgent(mpdconf)
 
-  def test_init_control_full_param(self):
-    co = MpdControl(host="host", port=6600, password="password", rmq_host="rmq_host", rmq_password="rmq_password", rmq_port=4444)
-    self.assertTrue(co.host == "host")
-    self.assertTrue(co.password == "password")
-    self.assertTrue(co.port == 6600)
-    
-    self.assertFalse(co.mpd is None)
-    
-    self.assertFalse(co.rabbit is None)
-    self.assertTrue(co.rabbit.host == "rmq_host")
-    self.assertTrue(co.rabbit.password == "rmq_password")
-    self.assertTrue(co.rabbit.port == 4444)
+    #Mock the mpd client
+    mpdmock=Mock()
+    mpdagent.mpd=mpdmock
+    # Call
+    mpdagent.connect_mpd()
+    # Test
+    mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
+  
+  def test_mpdagent_connect_mpd_password(self):
+    mpdconf={"host":"host","port":6600, "password":"password"}
+    mpdagent = MpdAgent(mpdconf)
 
+    #Mock the mpd client
+    mpdmock=Mock()
+    mpdagent.mpd=mpdmock
+    # Call
+    mpdagent.connect_mpd()
+    # Test
+    mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
+    mpdmock.password.assert_called_with(mpdconf["password"])
+  
+  def test_mpdagent_connect_bad_host_raises_mpdagentexception(self):
+    mpdconf={"host":"badhost","port":6600}
+    mpdagent = MpdAgent(mpdconf)
+    
+    #Mock the mpd client
+    mpdmock=Mock()
+    mpdagent.mpd=mpdmock
+    #Mock the connect method
+    connect=Mock(side_effect=ConnectionError())
+    mpdmock.connect=connect
+    
+    # Call
+    with self.assertRaises(MpdAgentException):
+      mpdagent.connect_mpd()
+  
+  def test_mpdagent_connect_bad_password_raises_mpdagentexception(self):
+    mpdconf={"host":"badhost","port":6600, "password":"bad_pass"}
+    mpdagent = MpdAgent(mpdconf)
+    
+    #Mock the mpd client
+    mpdmock=Mock()
+    mpdagent.mpd=mpdmock
+    #Mock the password method
+    password=Mock(side_effect=CommandError())
+    mpdmock.password=password
+    
+    # Call
+    with self.assertRaises(MpdAgentException):
+      mpdagent.connect_mpd()
+      
+    # Methods call assertions
+    mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
+    mpdmock.password.assert_called_with(mpdconf["password"])
 
+  def test_mpdagent_run_raises_mpdagentexception(self):
+    mpdconf={"host":"host","port":6600, "password":"password"}
+    mpdagent = MpdAgent(mpdconf)
+    with self.assertRaises(MpdAgentException):
+      mpdagent.run()
 
 def suite():
   loader = unittest.TestLoader()
@@ -46,5 +97,5 @@ def suite():
   return suite
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
   unittest.TextTestRunner(verbosity=2).run(suite())

@@ -2,6 +2,7 @@
 import unittest
 
 from clu.common.base import AutoConfigurable, AutoConfigurableException
+from clu.common.base import Configurable
 
 
 class AutoConfigurableTestCase(unittest.TestCase):
@@ -30,7 +31,7 @@ class AutoConfigurableTestCase(unittest.TestCase):
     co = AutoConfigurable({'one' : 1})
     self.assertTrue(co.one == 1)
 
-  def test_init_multiple_kwargs_param(self):
+  def test_init_multiple_dict_param(self):
     co = AutoConfigurable({'one':1, 'two':2})
     self.assertTrue(co.one == 1)
     self.assertTrue(co.two == 2)
@@ -46,37 +47,44 @@ class AutoConfigurableTestCase(unittest.TestCase):
     self.assertTrue(co.four.five.six == 6)
 
   def test_with_son(self):
-    import simplejson as json
+    import simplejson as json # pragma: no cover
     dics = '{"one":{"two":2},"four":{"five":{"six":6}}}'
-    dic= json.loads(dics)
+    dic= json.loads(dics) #pragma: no cover
     co = AutoConfigurable(dic)
     self.assertTrue(co.one.two == 2)
     self.assertTrue(co.four.five.six == 6)
   
   def test_inheritance_simple(self):
-    class A(AutoConfigurable):
+    class A(Configurable):
       def __init__(self, *args, **kwargs):
-        AutoConfigurable.__init__(self, *args, **kwargs)
-    co = AutoConfigurable(one=1, two=2)
-    self.assertTrue(co.one == 1)
-    self.assertTrue(co.two == 2)
+        Configurable.__init__(self, *args, **kwargs)
+    co = A(config={"one":1, "two":2})
+    self.assertTrue(co.config.one == 1)
+    self.assertTrue(co.config.two == 2)
   
   def test_inheritance_noneables(self):
-    class A(AutoConfigurable):
+    class A(Configurable):
       def __init__(self, *args, **kwargs):
-        AutoConfigurable.__init__(self, *args, **kwargs)
-        self.__nonenables__(("two",))
-    co = A(one=1)
-    self.assertTrue(co.one == 1)
-    self.assertTrue(co.two is None)
+        Configurable.__init__(self, *args, **kwargs)
+        self.__defaults__({"two":None,"three":3})
+    co = A(config={"one":1})
+    self.assertTrue(co.config.one == 1)
+    self.assertTrue(co.config.two is None)
+    self.assertTrue(co.config.three == 3)
   
   def test_inheritance_needed(self):
-    class A(AutoConfigurable):
+    class A(Configurable):
       def __init__(self, *args, **kwargs):
-        AutoConfigurable.__init__(self, *args, **kwargs)
-        self.__neededattrs__(("two",))
+        Configurable.__init__(self, *args, **kwargs)
+        self.__neededs__(("two",))
     with self.assertRaises(AutoConfigurableException):
-      co = A(one=1)
+      co = A(config={"one":1})
+  
+  def test_configurable_param(self):
+    co = Configurable(config={'one':1, 'two':2})
+    self.assertFalse(co.config is None)
+    self.assertTrue(co.config.one == 1)
+    self.assertTrue(co.config.two == 2)
 
 def suite():
   loader = unittest.TestLoader()
@@ -85,5 +93,5 @@ def suite():
   return suite
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':# pragma: no cover
   unittest.TextTestRunner(verbosity=2).run(suite())
