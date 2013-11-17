@@ -14,9 +14,10 @@ class CluAgentTestCase(unittest.TestCase):
   def test_cluagent_call_before_execute(self):
     cluagent = CluAgent()
     before_execute=Mock()
+    cluagent.before_execute=before_execute
     with self.assertRaises(CluException):
       cluagent.run()
-    before_execute.assert_called_once()
+    before_execute.assert_called_once_with()
   
   def test_cluagent_call_before_execute_excption(self):
     cluagent = CluAgent()
@@ -26,7 +27,7 @@ class CluAgentTestCase(unittest.TestCase):
     with self.assertRaises(CluException):
       cluagent.run()
     
-    before_execute.assert_called_once()
+    before_execute.assert_called_once_with()
   
   def test_cluagent_call_before_rexecute_after(self):
     cluagent = CluAgent()
@@ -40,9 +41,9 @@ class CluAgentTestCase(unittest.TestCase):
     
     cluagent.run()
     
-    before_execute.assert_called_once()
-    execute.assert_called_once()
-    after_execute.assert_called_once()
+    before_execute.assert_called_once_with()
+    execute.assert_called_once_with()
+    after_execute.assert_called_once_with()
   
 
 class ConfigurableCluAgentTestCase(unittest.TestCase):
@@ -54,9 +55,10 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
   def test_configcluagent_call_before_execute(self):
     cluagent = ConfigurableCluAgent()
     before_execute=Mock()
+    cluagent.before_execute=before_execute
     with self.assertRaises(CluException):
       cluagent.run()
-    before_execute.assert_called_once()
+    before_execute.assert_called_once_with()
   
   def test_configcluagent_call_before_execute_excption(self):
     cluagent = ConfigurableCluAgent()
@@ -66,7 +68,7 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     with self.assertRaises(CluException):
       cluagent.run()
     
-    before_execute.assert_called_once()
+    before_execute.assert_called_once_with()
   
   def test_configcluagent_call_before_rexecute_after(self):
     cluagent = ConfigurableCluAgent()
@@ -80,9 +82,9 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     
     cluagent.run()
     
-    before_execute.assert_called_once()
-    execute.assert_called_once()
-    after_execute.assert_called_once()
+    before_execute.assert_called_once_with()
+    execute.assert_called_once_with()
+    after_execute.assert_called_once_with()
 
 def suite():
   loader = unittest.TestLoader()

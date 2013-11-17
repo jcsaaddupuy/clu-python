@@ -1,14 +1,14 @@
 #!/usr/bin/env python2
 from clu.common.base import Configurable
+from clu.agents import CluAgentException
+from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
-from clu.agents import CluAgent, CluAgentException
-from clu.rabbitmq.common.base import WhiteRabbit
 import mpd
 
-class MpdAgentException(CluAgentException):
+class MusicPlayeraemonEception(CluAgentException):
   pass
 
-class MpdAgent(Configurable):
+class MusicPlayerDaemon(Configurable):
   """
   MPD client handler
   """
@@ -25,35 +25,33 @@ class MpdAgent(Configurable):
       if self.config.password is not None:
         self.mpd.password(self.config.password)
     except mpd.ConnectionError, connex:
-      raise MpdAgentException("Connection error", connex)
+      raise MusicPlayeraemonEception("Connection error on connect", connex)
     except mpd.CommandError, authex:
-      raise MpdAgentException("Authentcation error", authex)
+      raise MusicPlayeraemonEception("Authentcation error on connect", authex)
     except mpd.MPDError, unknownex:
-      raise MpdAgentException("Authentcation error", unknownex)
+      raise MusicPlayeraemonEception("Unknown MPD error on connect", unknownex)
   
+  def disconnect(self):
+    try:
+      self.mpd.disconnect()
+    except mpd.MPDError, mpdexcept:
+      raise MusicPlayeraemonEception("MPD Error on disconnect", mpdexcept)
 
-class MpdRmqAgent(CluAgent):
-  def __init__(self, mpdconf={}, rmqconf={}):
-    CluAgent.__init__(self)
-    self.mpdagent=MpdAgent(mpdconf)
-    self.rmqagent=WhiteRabbit(rmqconf)
+  
+class MpdRmqAgent(RabbitMqAgent):
+  def __init__(self, config, mpdconf={}, rmqconf={}):
+    RabbitMqAgent.__init__(self,config,rmqconf)
+    self.mpdagent=MusicPlayerDaemon(mpdconf)
+    
     
   def before_execute(self):
+    RabbitMqAgent.before_execute(self)
     self.mpdagent.connect()
-    self.rmqagent.connect()
 
   def after_execute(self):
+    RabbitMqAgent.after_execute(self)
     self.mpdagent.disconnect()
-    self.rmqagent.disconnect()
 
-class MpdControlAgent(MpdRmqAgent):
-  def __init__(self, mpdconf={}, rmqconf={}):
-    MpdRmqAgent.__init__(self, mpdconf, rmqconf)
-  
+  def mpdclient(self):
+    return self.mpdagent.mpd
 
-class MpdStatusAgent(MpdRmqAgent):
-  def __init__(self, mpdconf={}, rmqconf={}):
-    MpdRmqAgent.__init__(self, mpdconf, rmqconf)
-
-  def run(self):
-    pass

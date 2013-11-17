@@ -39,5 +39,9 @@ class Configurable(object):
   def __defaults__(self, defaults={}):
     for k in defaults:
       if not self.config.__dict__.has_key(k):
-        self.config.__dict__[k]=defaults[k]
+        val=defaults[k]
+        if type(val)==dict:
+          self.config.__dict__[k]=AutoConfigurable(val)
+        else:
+          self.config.__dict__[k]=val
 
