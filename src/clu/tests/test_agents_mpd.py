@@ -124,6 +124,16 @@ class MpdStatusAgentTestCase(unittest.TestCase):
     
     self.assertTrue(agent.rmqagent is not None)
     self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
+  
+  def test_mpdrmq_statusagent_run_readstatus(self):
+    mpdconf={"host":"mpd.lan"}
+    rmqconf={"host":"rmq.lan"}
+    agent=MpdStatusAgent(mpdconf, rmqconf)
+    self.assertTrue(agent.mpdagent is not None)
+    self.assertTrue(agent.mpdagent.config.host == "mpd.lan")
+    
+    self.assertTrue(agent.rmqagent is not None)
+    self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
 
 def suite():
   loader = unittest.TestLoader()

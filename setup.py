@@ -24,7 +24,7 @@ setup(name='clu',
     # containing TestCase classes. If the named suite is a package,
     # any submodules and subpackages are recursively added to the
     # overall test suite.
-    test_suite = 'tests.suite',
+    test_suite = 'clu.tests.suite',
     tests_require = ['simplejson', 'mock', 'coverage'],
 
     )

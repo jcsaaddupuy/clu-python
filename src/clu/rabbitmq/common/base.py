@@ -5,6 +5,9 @@ import pika
 from clu.common.base import Configurable
 
 class WhiteRabbit(Configurable):
+  """
+  Rabbitmq client handler.
+  """
   def __init__(self, config={}):
     Configurable.__init__(self, config)
     defaults={"host":"localhost", "port":5672, "user":"guest", "password":"guest"}
@@ -23,12 +26,3 @@ class WhiteRabbit(Configurable):
   
   def disconnect(self):
     self.connection.close()
-
-
-
-class RabbitAgent(Configurable):
-  def __init__(self, config={}):
-    Configurable.__init__(self, config)
-    rabbit = WhiteRabbit(config)
-    self.rabbit = rabbit
-

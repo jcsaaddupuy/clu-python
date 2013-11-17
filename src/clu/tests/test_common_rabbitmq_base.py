@@ -3,7 +3,7 @@ import unittest
 from mock import Mock, MagicMock, patch
 
 from clu.common.base import AutoConfigurableException
-from clu.rabbitmq.common.base import WhiteRabbit, RabbitAgent
+from clu.rabbitmq.common.base import WhiteRabbit
 
 
 class WhiteRabbitTestCase(unittest.TestCase):
@@ -29,14 +29,6 @@ class WhiteRabbitTestCase(unittest.TestCase):
     self.assertTrue(co.config.port == 56722)
 
 
-  def test_init_with_rabbit(self):
-    config={"host":"host", "port":5656, "user":"user","password":"password"}
-    co = RabbitAgent(config)
-    self.assertFalse(co.rabbit is None)
-    self.assertTrue(co.config.host == "host")
-    self.assertTrue(co.config.user == "user")
-    self.assertTrue(co.config.password == "password")
-    self.assertTrue(co.config.port == 5656)
 
   def test_connect(self):
     credpatcher = patch('pika.PlainCredentials')

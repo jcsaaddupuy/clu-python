@@ -2,13 +2,16 @@
 from clu.common.base import Configurable
 
 from clu.agents import CluAgent, CluAgentException
-from clu.rabbitmq.common.base import RabbitAgent
+from clu.rabbitmq.common.base import WhiteRabbit
 import mpd
 
 class MpdAgentException(CluAgentException):
   pass
 
 class MpdAgent(Configurable):
+  """
+  MPD client handler
+  """
   def __init__(self, config={}):
     Configurable.__init__(self, config)
     defaults={"host":"localhost", "port":6600, "password":None}
@@ -31,11 +34,9 @@ class MpdAgent(Configurable):
 
 class MpdRmqAgent(CluAgent):
   def __init__(self, mpdconf={}, rmqconf={}):
+    CluAgent.__init__(self)
     self.mpdagent=MpdAgent(mpdconf)
-    self.rmqagent=RabbitAgent(rmqconf)
-
-    self.mpdclient=self.mpdagent.mpd
-    self.rmqclient=self.rmqagent.rabbit
+    self.rmqagent=WhiteRabbit(rmqconf)
     
   def before_execute(self):
     self.mpdagent.connect()
