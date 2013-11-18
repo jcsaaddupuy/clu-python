@@ -14,12 +14,18 @@ class RabbitMqAgent(ConfigurableCluAgent):
     
     
   def before_execute(self):
-    self.rmqagent.connect()
-    channel = self.rmqchannel()
-    channel.exchange_declare(exchange=self.config.channel.exchange, type=self.config.channel.type)
+    try:
+      ConfigurableCluAgent.before_execute(self)
+    finally:
+      self.rmqagent.connect()
+      channel = self.rmqchannel()
+      channel.exchange_declare(exchange=self.config.channel.exchange, type=self.config.channel.type)
 
-  def after_execute(self):
-    self.rmqagent.disconnect()
+  def ensure_after_execute(self):
+    try:
+      ConfigurableCluAgent.ensure_after_execute(self)
+    finally:
+      self.rmqagent.disconnect()
   
   def rmqchannel(self):
     return self.rmqagent.channel
