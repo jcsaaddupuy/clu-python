@@ -66,16 +66,6 @@ class RabbitMqAgentTestCase(unittest.TestCase):
 
     method.assert_called_once_with(rmq)
   
-  @patch.object(ConfigurableCluAgent,'after_execute')
-  def test_rabbitmqagent_before_execute_call_super(self, method):
-    rmq = RabbitMqAgent()
-
-    rmqagent = Mock()
-    rmq.rmqagent = rmqagent
-
-    rmq.after_execute()
-
-    method.assert_called_once_with(rmq)
   
   @patch.object(ConfigurableCluAgent,'ensure_after_execute')
   def test_rabbitmqagent_ensure_after_execute_call_super(self, method):
