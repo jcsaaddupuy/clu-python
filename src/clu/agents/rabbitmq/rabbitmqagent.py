@@ -27,6 +27,12 @@ class RabbitMqAgent(ConfigurableCluAgent):
     finally:
       self.rmqagent.disconnect()
   
+  def after_execute(self):
+    try:
+      ConfigurableCluAgent.after_execute(self)
+    finally:
+      pass
+  
   def rmqchannel(self):
     return self.rmqagent.channel
 

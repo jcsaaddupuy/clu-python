@@ -1,9 +1,12 @@
 #!/usr/bin/env python2
 import unittest
-from mock import Mock, MagicMock
+from mock import Mock, MagicMock, patch
 
 from clu.common.base import AutoConfigurableException
+from clu.agents.base import ConfigurableCluAgent
+
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
+
 
 
 class RabbitMqAgentTestCase(unittest.TestCase):
@@ -42,7 +45,29 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent.channel.exchange_declare(exchange=conf["channel"]["exchange"], type=conf["channel"]["type"])
 
   
-  def test_rabbitmqagent_after_execute(self):
+  def test_rabbitmqagent_ensure_after_execute(self):
+    rmq = RabbitMqAgent()
+
+    rmqagent = Mock()
+    rmq.rmqagent = rmqagent
+
+    rmq.ensure_after_execute()
+
+    rmqagent.disconnect.assert_called_once_with()
+  
+  @patch.object(ConfigurableCluAgent,'before_execute')
+  def test_rabbitmqagent_before_execute_call_super(self, method):
+    rmq = RabbitMqAgent()
+
+    rmqagent = Mock()
+    rmq.rmqagent = rmqagent
+
+    rmq.before_execute()
+
+    method.assert_called_once_with(rmq)
+  
+  @patch.object(ConfigurableCluAgent,'after_execute')
+  def test_rabbitmqagent_before_execute_call_super(self, method):
     rmq = RabbitMqAgent()
 
     rmqagent = Mock()
@@ -50,7 +75,18 @@ class RabbitMqAgentTestCase(unittest.TestCase):
 
     rmq.after_execute()
 
-    rmqagent.disconnect.assert_called_once_with()
+    method.assert_called_once_with(rmq)
+  
+  @patch.object(ConfigurableCluAgent,'ensure_after_execute')
+  def test_rabbitmqagent_ensure_after_execute_call_super(self, method):
+    rmq = RabbitMqAgent()
+
+    rmqagent = Mock()
+    rmq.rmqagent = rmqagent
+
+    rmq.ensure_after_execute()
+
+    method.assert_called_once_with(rmq)
 
   def test_rabbitmqagent_basicpublish(self):
     import json
