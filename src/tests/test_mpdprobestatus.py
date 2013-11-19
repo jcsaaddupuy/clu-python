@@ -17,8 +17,8 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     self.assertTrue(agent.config.channel.exchange == agentconf["channel"]["exchange"])
     self.assertTrue(agent.config.channel.type == agentconf["channel"]["type"])
     
-    self.assertTrue(agent.mpdagent is not None)
-    self.assertTrue(agent.mpdagent.config.host == "mpd.lan")
+    self.assertTrue(agent.mpdclient is not None)
+    self.assertTrue(agent.mpdclient.config.host == "mpd.lan")
     
     self.assertTrue(agent.rmqagent is not None)
     self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
@@ -52,13 +52,13 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     mockedstatus=Mock(return_value=mpdstatus)
 
     #Mocks binding
-    agent.mpdagent.mpd.idle=mockedidle
-    agent.mpdagent.mpd.status=mockedstatus
+    agent.mpdclient.client.idle=mockedidle
+    agent.mpdclient.client.status=mockedstatus
 
     #Setup generic mock for others methos wich are not tested here
     ignoredmocks=Mock()
-    agent.mpdagent.connect=ignoredmocks
-    agent.mpdagent.disconnect=ignoredmocks
+    agent.mpdclient.connect=ignoredmocks
+    agent.mpdclient.disconnect=ignoredmocks
     agent.rmqagent=ignoredmocks
 
     #Call

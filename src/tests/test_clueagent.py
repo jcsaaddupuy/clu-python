@@ -65,11 +65,9 @@ class CluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as ex:
+    with(self.assertRaises(CluAgentException)) as ex:
       cluagent.run()
     
-    # Assert the exception on after_execute is the one raised
-    self.assertEquals(execute.side_effect, ex.exception)
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
     ensure_after_execute.assert_called_once_with()
@@ -87,11 +85,9 @@ class CluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as ex:
+    with(self.assertRaises(CluAgentException)) as ex:
       cluagent.run()
     
-    # Assert the exception on after_execute is the one raised
-    self.assertEquals(after_execute.side_effect, ex.exception)
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
     after_execute.assert_called_once_with()
@@ -113,10 +109,8 @@ class CluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as e:
+    with(self.assertRaises(CluAgentException)) as e:
       cluagent.run()
-    # Assert the exception on after_execute is the one raised
-    self.assertTrue(e.exception ==  after_execute.side_effect)
 
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
@@ -139,10 +133,8 @@ class CluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as e:
+    with(self.assertRaises(CluAgentException)) as e:
       cluagent.run()
-    # Assert the exception on after_execute is the one raised
-    self.assertTrue(e.exception ==  ensure_after_execute.side_effect)
 
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
@@ -202,11 +194,9 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as ex:
+    with(self.assertRaises(CluAgentException)) as ex:
       cluagent.run()
     
-    # Assert the exception on after_execute is the one raised
-    self.assertEquals(execute.side_effect, ex.exception)
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
     ensure_after_execute.assert_called_once_with()
@@ -224,11 +214,9 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as ex:
+    with(self.assertRaises(CluAgentException)) as ex:
       cluagent.run()
     
-    # Assert the exception on after_execute is the one raised
-    self.assertEquals(after_execute.side_effect, ex.exception)
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
     after_execute.assert_called_once_with()
@@ -250,10 +238,8 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as e:
+    with(self.assertRaises(CluAgentException)) as e:
       cluagent.run()
-    # Assert the exception on after_execute is the one raised
-    self.assertTrue(e.exception ==  after_execute.side_effect)
 
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()
@@ -276,10 +262,8 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     cluagent.after_execute=after_execute
     cluagent.ensure_after_execute=ensure_after_execute
     
-    with(self.assertRaises(Exception)) as e:
+    with(self.assertRaises(CluAgentException)) as e:
       cluagent.run()
-    # Assert the exception on after_execute is the one raised
-    self.assertTrue(e.exception ==  ensure_after_execute.side_effect)
 
     before_execute.assert_called_once_with()
     execute.assert_called_once_with()

@@ -17,13 +17,13 @@ class MpdClient(Configurable):
     defaults={"host":"localhost", "port":6600, "password":None}
     self.__defaults__(defaults)
 
-    self.mpd=mpd.MPDClient()
+    self.client=mpd.MPDClient()
 
   def connect(self):
     try:
-      self.mpd.connect(self.config.host, self.config.port)
+      self.client.connect(self.config.host, self.config.port)
       if self.config.password is not None:
-        self.mpd.password(self.config.password)
+        self.client.password(self.config.password)
     except mpd.ConnectionError, connex:
       raise MpdClientEception("Connection error on connect", connex)
     except mpd.CommandError, authex:
@@ -33,6 +33,6 @@ class MpdClient(Configurable):
   
   def disconnect(self):
     try:
-      self.mpd.disconnect()
+      self.client.disconnect()
     except mpd.MPDError, mpdexcept:
       raise MpdClientEception("MPD Error on disconnect", mpdexcept)

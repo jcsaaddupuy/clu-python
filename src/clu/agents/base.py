@@ -28,21 +28,16 @@ class CluAgent(object):
       raise e
     # if execute() or after_execute() raise an exception,try to call  ensure_after_execute().
     # if an exception is raised by ensure_after_execute(), raise the first exception seen
-    ex=None
     try:
       self.execute()
       self.after_execute()
-    except Exception, exceptionExecute:
-      ex = exceptionExecute
+    except Exception, e:
+      raise CluAgentException(e)
     finally:
       try:
         self.ensure_after_execute()
-      except Exception, exceptionAfterExecute:
-        if ex is None:
-          #ensure the first exception is always raised
-          ex = exceptionAfterExecute
-      if ex is not None:
-        raise ex
+      except Exception, e2:
+        raise CluAgentException(e2)
 
 from clu.common.base import Configurable
 class ConfigurableCluAgent(Configurable):
@@ -67,18 +62,13 @@ class ConfigurableCluAgent(Configurable):
       raise e
     # if execute() or after_execute() raise an exception,try to call  ensure_after_execute().
     # if an exception is raised by ensure_after_execute(), raise the first exception seen
-    ex=None
     try:
       self.execute()
       self.after_execute()
-    except Exception, exceptionExecute:
-      ex = exceptionExecute
+    except Exception, e:
+      raise CluAgentException(e)
     finally:
       try:
         self.ensure_after_execute()
-      except Exception, exceptionAfterExecute:
-        if ex is None:
-          #ensure the first exception is always raised
-          ex = exceptionAfterExecute
-      if ex is not None:
-        raise ex
+      except Exception, e2:
+        raise CluAgentException(e2)

@@ -9,111 +9,111 @@ from mpd import ConnectionError, CommandError, MPDError
 
 class MpdAgentTestCase(unittest.TestCase):
 
-  def test_mpdagent_init_empty_params(self):
-    mpdagent = MpdClient()
-    self.assertTrue(mpdagent.config.host == "localhost")
-    self.assertTrue(mpdagent.config.port == 6600)
-    self.assertTrue(mpdagent.config.password is None)
+  def test_mpdclient_init_empty_params(self):
+    mpdclient = MpdClient()
+    self.assertTrue(mpdclient.config.host == "localhost")
+    self.assertTrue(mpdclient.config.port == 6600)
+    self.assertTrue(mpdclient.config.password is None)
 
-  def test_mpdagent_init_with_mpd_conf(self):
+  def test_mpdclient_init_with_mpd_conf(self):
     mpdconf={"host":"host","port":6601}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
-    self.assertTrue(mpdagent.config.host == "host")
-    self.assertTrue(mpdagent.config.password is None)
-    self.assertTrue(mpdagent.config.port == 6601)
+    self.assertTrue(mpdclient.config.host == "host")
+    self.assertTrue(mpdclient.config.password is None)
+    self.assertTrue(mpdclient.config.port == 6601)
 
-    self.assertTrue(mpdagent.mpd is not None)
+    self.assertTrue(mpdclient.client is not None)
 
-  def test_mpdagent_connect_no_password(self):
+  def test_mpdclient_connect_no_password(self):
     mpdconf={"host":"host","port":6600}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
-    mpdagent.mpd=mpdmock
+    mpdclient.client=mpdmock
     # Call
-    mpdagent.connect()
+    mpdclient.connect()
     # Test
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
 
-  def test_mpdagent_connect_password(self):
+  def test_mpdclient_connect_password(self):
     mpdconf={"host":"host","port":6600, "password":"password"}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
-    mpdagent.mpd=mpdmock
+    mpdclient.client=mpdmock
     # Call
-    mpdagent.connect()
+    mpdclient.connect()
     # Test
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
     mpdmock.password.assert_called_with(mpdconf["password"])
 
-  def test_mpdagent_connect_bad_host_raises_mpdagentexception(self):
+  def test_mpdclient_connect_bad_host_raises_mpdclientexception(self):
     mpdconf={"host":"badhost","port":6600}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
-    mpdagent.mpd=mpdmock
+    mpdclient.client=mpdmock
     #Mock the connect method
     connect=Mock(side_effect=ConnectionError())
     mpdmock.connect=connect
 
     # Call
     with self.assertRaises(MpdClientEception):
-      mpdagent.connect()
+      mpdclient.connect()
 
 
-  def test_mpdagent_disconnect_mpdexception_raises_mpdagentexception(self):
+  def test_mpdclient_disconnect_mpdexception_raises_mpdclientexception(self):
     mpdconf={"host":"badhost","port":6600}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
-    mpdagent.mpd=mpdmock
+    mpdclient.client=mpdmock
     #Mock the connect method
     disconnect=Mock(side_effect=MPDError())
     mpdmock.disconnect=disconnect
 
     # Call
     with self.assertRaises(MpdClientEception):
-      mpdagent.disconnect()
+      mpdclient.disconnect()
 
 
-  def test_mpdagent_connect_bad_password_raises_mpdagentexception(self):
+  def test_mpdclient_connect_bad_password_raises_mpdclientexception(self):
     mpdconf={"host":"badhost","port":6600, "password":"bad_pass"}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
-    mpdagent.mpd=mpdmock
+    mpdclient.client=mpdmock
     #Mock the password method
     password=Mock(side_effect=CommandError())
     mpdmock.password=password
 
     # Call
     with self.assertRaises(MpdClientEception):
-      mpdagent.connect()
+      mpdclient.connect()
 
     # Methods call assertions
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])
     mpdmock.password.assert_called_with(mpdconf["password"])
 
-  def test_mpdagent_connectexception_raises_mpdagentexception(self):
+  def test_mpdclient_connectexception_raises_mpdclientexception(self):
     mpdconf={"host":"badhost","port":6600}
-    mpdagent = MpdClient(mpdconf)
+    mpdclient = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
-    mpdagent.mpd=mpdmock
+    mpdclient.client=mpdmock
     #Mock the connect method and reaise MPDError
     connect=Mock(side_effect=MPDError())
     mpdmock.connect=connect
     # Call
     with self.assertRaises(MpdClientEception):
-      mpdagent.connect()
+      mpdclient.connect()
 
     # Methods call assertions
     mpdmock.connect.assert_called_with(mpdconf["host"], mpdconf["port"])

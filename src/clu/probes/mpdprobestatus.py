@@ -5,7 +5,7 @@ class MpdProbeStatus(MpdRmqAgent):
     MpdRmqAgent.__init__(self, config, mpdconf, rmqconf)
 
   def execute(self):
-    mpdclient=self.mpdclient()
+    mpdclient=self.mpdclient.client
     # Wait for MPD events
     mpdclient.idle()
     status=mpdclient.status()

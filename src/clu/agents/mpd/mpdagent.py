@@ -6,21 +6,30 @@ from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 from mpdclient import MpdClient
 import mpd
 
+class MpdRmqException(Exception):
+  pass
   
 class MpdRmqAgent(RabbitMqAgent):
   def __init__(self, config, mpdconf={}, rmqconf={}):
     RabbitMqAgent.__init__(self,config,rmqconf)
-    self.mpdagent=MpdClient(mpdconf)
+    self.mpdclient=MpdClient(mpdconf)
     
     
   def before_execute(self):
+    self.mpdclient.connect()
     RabbitMqAgent.before_execute(self)
-    self.mpdagent.connect()
-
+  
   def after_execute(self):
     RabbitMqAgent.after_execute(self)
-    self.mpdagent.disconnect()
 
-  def mpdclient(self):
-    return self.mpdagent.mpd
+  def ensure_after_execute(self):
+    try:
+      RabbitMqAgent.ensure_after_execute(self)
+    except Exception, e:
+      raise MpdRmqException(e)
+    finally:
+      try:
+        self.mpdclient.disconnect()
+      except Exception, e2:
+        raise MpdRmqException(e2)
 

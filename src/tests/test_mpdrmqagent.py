@@ -1,6 +1,6 @@
 import unittest
 from mock import Mock, MagicMock
-from clu.agents.mpd.mpdagent import MpdRmqAgent
+from clu.agents.mpd.mpdagent import MpdRmqAgent, MpdRmqException
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
 from mock import patch
@@ -10,9 +10,9 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     mpdconf={"host":"mpd.lan"}
     rmqconf={"host":"rmq.lan"}
     agent=MpdRmqAgent(agentconf, mpdconf, rmqconf)
-    self.assertFalse(agent.mpdagent is None)
-    self.assertTrue(agent.mpdagent.config.host == "mpd.lan")
-    self.assertFalse(agent.mpdagent.mpd is None)
+    self.assertFalse(agent.mpdclient is None)
+    self.assertTrue(agent.mpdclient.config.host == "mpd.lan")
+    self.assertFalse(agent.mpdclient.client is None)
     
     self.assertFalse(agent.rmqagent is None)
     self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
@@ -24,7 +24,7 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     agent=MpdRmqAgent(agentconf, mpdconf, rmqconf)
 
     mpdmock=Mock()
-    agent.mpdagent=mpdmock
+    agent.mpdclient=mpdmock
 
     rmqmock=Mock()
     agent.rmqagent=rmqmock
@@ -48,7 +48,7 @@ class MpdRmqAgentTestCase(unittest.TestCase):
 
     #Setup generic mock for others methos wich are not tested here
     ignoredmocks=Mock()
-    agent.mpdagent=ignoredmocks
+    agent.mpdclient=ignoredmocks
     agent.rmqagent=ignoredmocks
     
 
@@ -67,13 +67,48 @@ class MpdRmqAgentTestCase(unittest.TestCase):
 
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
-    agent.mpdagent=ignoredmocks
+    agent.mpdclient=ignoredmocks
     agent.rmqagent=ignoredmocks
     
 
-    instance = mocked.return_value 
     agent.after_execute()
     mocked.assert_called_with(agent)
+  
+  @patch.object(RabbitMqAgent, 'ensure_after_execute')
+  def test_mpdrmq_super_after_execute_exception(self, mocked):
+    """ Test that the call to after_execute call superclass after_execute"""
+    agentconf={}
+    mpdconf={"host":"mpd.lan"}
+    rmqconf={"host":"rmq.lan"}
+    agent=MpdRmqAgent(agentconf, mpdconf, rmqconf)
+
+    #Setup generic mock for others methods wich are not tested here
+    ignoredmocks=Mock()
+    agent.mpdclient=ignoredmocks
+    agent.rmqagent=ignoredmocks
+    
+
+    mocked.side_effect=Exception("In your face")
+
+    with self.assertRaises(MpdRmqException):
+      agent.ensure_after_execute()
+    mocked.assert_called_with(agent)
+  
+  def test_mpdrmq_after_execute_exception(self):
+    """ Test that the call to after_execute call superclass after_execute"""
+    agentconf={}
+    mpdconf={"host":"mpd.lan"}
+    rmqconf={"host":"rmq.lan"}
+    agent=MpdRmqAgent(agentconf, mpdconf, rmqconf)
+
+    #Setup generic mock for others methods wich are not tested here
+    ignoredmocks=Mock()
+    agent.mpdclient=ignoredmocks
+    agent.rmqagent=ignoredmocks
+    agent.rmqagent.disconnect.side_effect=Exception("In your face")
+
+    with self.assertRaises(MpdRmqException):
+      agent.ensure_after_execute()
 
 def suite():
   loader = unittest.TestLoader()
