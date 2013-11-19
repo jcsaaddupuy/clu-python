@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 from clu.common.base import Configurable
 from clu.agents import CluAgentException
-from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
 from xbmcjson import XBMC
 

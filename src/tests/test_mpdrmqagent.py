@@ -33,10 +33,10 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     agent.execute=execute
     agent.run()
 
-    mpdmock.connect.assert_called()
-    mpdmock.connect.assert_called()
-    rmqmock.disconnect.assert_called()
-    rmqmock.disconnect.assert_called()
+    mpdmock.connect.assert_called_with()
+    mpdmock.connect.assert_called_with()
+    rmqmock.disconnect.assert_called_with()
+    rmqmock.disconnect.assert_called_with()
 
   @patch.object(RabbitMqAgent, 'before_execute')
   def test_mpdrmq_before_execute(self, mocked):
