@@ -1,5 +1,5 @@
 from clu.agents import ConfigurableCluAgent, CluAgentException
-from clu.rabbitmq.common.base import WhiteRabbit
+from rabbitmqclient import RabbitmqClient
 
 import json
 class RabbitMqAgent(ConfigurableCluAgent):
@@ -10,7 +10,7 @@ class RabbitMqAgent(ConfigurableCluAgent):
     ConfigurableCluAgent.__init__(self, config)
     defaults={"channel":{"exchange":"","type":""},"messages":{"routing_key":""}}
     self.__defaults__(defaults)
-    self.rmqagent=WhiteRabbit(rmqconf)
+    self.rmqagent=RabbitmqClient(rmqconf)
     
     
   def before_execute(self):

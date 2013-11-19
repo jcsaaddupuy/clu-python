@@ -2,7 +2,8 @@
 
 import test_common_base
 import test_clueagent
-import test_common_rabbitmq_base
+
+import test_rabbitmqclient
 import test_rabbitmqagent
 
 import test_mpdclient
@@ -19,7 +20,8 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTests(test_common_base.suite())
     suite.addTests(test_clueagent.suite())
-    suite.addTests(test_common_rabbitmq_base.suite())
+    
+    suite.addTests(test_rabbitmqclient.suite())
     suite.addTests(test_rabbitmqagent.suite())
     
     suite.addTests(test_mpdclient.suite())
