@@ -1,6 +1,6 @@
 from clu.agents.mpd.mpdagent import MpdRmqAgent
 
-class MpdStatusProbe(MpdRmqAgent):
+class MpdProbeStatus(MpdRmqAgent):
   def __init__(self, config={}, mpdconf={}, rmqconf={}):
     MpdRmqAgent.__init__(self, config, mpdconf, rmqconf)
 

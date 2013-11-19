@@ -1,16 +1,17 @@
 #!/usr/bin/env python2
 import unittest
 from mock import Mock, MagicMock
-from clu.probes.mpd import MpdStatusProbe
+from clu.probes.mpdprobestatus import MpdProbeStatus
 import json
 from mock import patch
-class MpdStatusProbeTestCase(unittest.TestCase):
-  def test_mpdprobe_statusagent_init(self):
+
+class MpdProbeStatusTestCase(unittest.TestCase):
+  def test_mpdprobestatus_statusagent_init(self):
     
     agentconf={"channel":{"exchange":"home.events","type":"fanout"}}
     mpdconf={"host":"mpd.lan"}
     rmqconf={"host":"rmq.lan"}
-    agent=MpdStatusProbe(agentconf, mpdconf, rmqconf)
+    agent=MpdProbeStatus(agentconf, mpdconf, rmqconf)
     
     self.assertTrue(agent.config is not None)
     self.assertTrue(agent.config.channel.exchange == agentconf["channel"]["exchange"])
@@ -27,7 +28,7 @@ class MpdStatusProbeTestCase(unittest.TestCase):
     agentconf={"channel":{"exchange":"home.events","type":"direct"},"messages":{"routing_key":"home.events.multimedia.music.mpd"}}
     mpdconf={"host":"mpd.lan"}
     rmqconf={"host":"rmq.lan"}
-    agent=MpdStatusProbe(agentconf, mpdconf, rmqconf)
+    agent=MpdProbeStatus(agentconf, mpdconf, rmqconf)
     
     #Mocks creation
     mockedidle=Mock(return_value=['mixer',])
@@ -73,7 +74,7 @@ class MpdStatusProbeTestCase(unittest.TestCase):
 def suite():
   loader = unittest.TestLoader()
   suite = unittest.TestSuite()
-  suite.addTest(loader.loadTestsFromTestCase(MpdStatusProbeTestCase))
+  suite.addTest(loader.loadTestsFromTestCase(MpdProbeStatusTestCase))
   return suite
 
 

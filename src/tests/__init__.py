@@ -8,7 +8,7 @@ import test_rabbitmqagent
 
 import test_mpdclient
 import test_mpdrmqagent
-import test_probe_mpd
+import test_mpdprobestatus
 
 import test_xbmcclient
 import test_xbmcagent
@@ -27,7 +27,7 @@ def suite():
     suite.addTests(test_mpdclient.suite())
     suite.addTests(test_mpdrmqagent.suite())
 
-    suite.addTests(test_probe_mpd.suite())
+    suite.addTests(test_mpdprobestatus.suite())
 
     suite.addTests(test_xbmcclient.suite())
     suite.addTests(test_xbmcagent.suite())
