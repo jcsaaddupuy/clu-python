@@ -3,13 +3,13 @@ from clu.common.base import Configurable
 from clu.agents import CluAgentException
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
-from xbmc import Xbmc
+from xbmcclient import XbmcClient
 
 
 class XbmcRmqAgent(RabbitMqAgent):
   def __init__(self, config, xbmcconf={}, rmqconf={}):
     RabbitMqAgent.__init__(self,config,rmqconf)
-    self.xbmc=Xbmc(xbmcconf)
+    self.xbmc=XbmcClient(xbmcconf)
     
   def before_execute(self):
     RabbitMqAgent.before_execute(self)

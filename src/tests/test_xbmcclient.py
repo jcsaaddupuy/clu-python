@@ -4,12 +4,12 @@ from mock import Mock, MagicMock
 
 from clu.common.base import AutoConfigurableException
 from clu.agents import CluAgentException
-from clu.agents.xbmc.xbmc import Xbmc
+from clu.agents.xbmc.xbmcclient import XbmcClient
 
-class XbmcAgentTestCase(unittest.TestCase):
+class XbmcClientTestCase(unittest.TestCase):
 
   def test_xbmc_init_empty_params(self):
-    xbmc = Xbmc()
+    xbmc = XbmcClient()
     self.assertTrue(xbmc.config.host == "localhost")
     self.assertTrue(xbmc.config.port == 8080)
     self.assertTrue(xbmc.config.user == "xbmc")
@@ -19,7 +19,7 @@ class XbmcAgentTestCase(unittest.TestCase):
 
   def test_xbmc_init_with_xbmc_conf(self):
     xbmcconf={"host":"host","port":8081, "user":"USER", "password":"PASSWORD"}
-    xbmc = Xbmc(xbmcconf)
+    xbmc = XbmcClient(xbmcconf)
     
     self.assertTrue(xbmc.config.host == "host")
     self.assertTrue(xbmc.config.port == 8081)
@@ -31,7 +31,7 @@ class XbmcAgentTestCase(unittest.TestCase):
 
   def test_xbmc_getsonrpc(self):
     xbmcconf={}
-    xbmc = Xbmc(xbmcconf)
+    xbmc = XbmcClient(xbmcconf)
     self.assertTrue(xbmc.get_json_rpc("host") == "host/jsonrpc")
     self.assertTrue(xbmc.get_json_rpc("host/") == "host/jsonrpc")
 
@@ -40,7 +40,7 @@ class XbmcAgentTestCase(unittest.TestCase):
 def suite():
   loader = unittest.TestLoader()
   suite = unittest.TestSuite()
-  suite.addTest(loader.loadTestsFromTestCase(XbmcAgentTestCase))
+  suite.addTest(loader.loadTestsFromTestCase(XbmcClientTestCase))
   return suite
 
 

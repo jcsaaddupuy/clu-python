@@ -5,10 +5,10 @@ from clu.agents import CluAgentException
 from xbmcjson import XBMC
 
 
-class XbmcException(CluAgentException):
+class XbmcClientException(CluAgentException):
   pass
 
-class Xbmc(Configurable):
+class XbmcClient(Configurable):
   """
   XBMC client handler
   """

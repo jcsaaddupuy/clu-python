@@ -9,7 +9,7 @@ import test_mpdclient
 import test_mpdrmqagent
 import test_probe_mpd
 
-import test_xbmc
+import test_xbmcclient
 import test_xbmcagent
 
 import test_telnetclient
@@ -26,8 +26,10 @@ def suite():
     suite.addTests(test_mpdrmqagent.suite())
 
     suite.addTests(test_probe_mpd.suite())
-    suite.addTests(test_xbmc.suite())
+
+    suite.addTests(test_xbmcclient.suite())
     suite.addTests(test_xbmcagent.suite())
+    
     suite.addTests(test_telnetclient.suite())
     return suite
 
