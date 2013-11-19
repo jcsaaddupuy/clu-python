@@ -14,7 +14,7 @@ setup(name='clu',
     # package_dir directive maps package names to directories.
     # package_name:package_directory
     package_dir = {'': 'src'},
-    install_requires = ["python-mpd >= 0.3.0"],
+    install_requires = ["python-mpd >= 0.3.0", "xbmc-json"],
 
 
     # Tests
