@@ -123,7 +123,7 @@ class CluAgentTestCase(unittest.TestCase):
     after_execute.assert_called_once_with()
     ensure_after_execute.assert_called_once_with()
   
-  def test_cluagent_call_ensure_afterexecute_on_after_execute_exception(self):
+  def test_cluagent_call_ensure_afterexecute_on_after_execute_exception_is_first(self):
     """ Ensure that when execute() and after_execute() raises an Exception, the first is raised"""
     ex_ensure_after=Exception("In your face")
     ensure_after_execute=Mock(side_effect=ex_ensure_after)
@@ -260,7 +260,7 @@ class ConfigurableCluAgentTestCase(unittest.TestCase):
     after_execute.assert_called_once_with()
     ensure_after_execute.assert_called_once_with()
   
-  def test_cluagent_call_ensure_afterexecute_on_after_execute_exception(self):
+  def test_cluagent_call_ensure_afterexecute_on_after_execute_exception_is_first(self):
     """ Ensure that when execute() and after_execute() raises an Exception, the first is raised"""
     ex_ensure_after=Exception("In your face")
     ensure_after_execute=Mock(side_effect=ex_ensure_after)
