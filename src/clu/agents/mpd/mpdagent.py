@@ -3,14 +3,14 @@ from clu.common.base import Configurable
 from clu.agents import CluAgentException
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
-from musicplayerdaemon import MusicPlayerDaemon
+from mpdclient import MpdClient
 import mpd
 
   
 class MpdRmqAgent(RabbitMqAgent):
   def __init__(self, config, mpdconf={}, rmqconf={}):
     RabbitMqAgent.__init__(self,config,rmqconf)
-    self.mpdagent=MusicPlayerDaemon(mpdconf)
+    self.mpdagent=MpdClient(mpdconf)
     
     
   def before_execute(self):

@@ -5,10 +5,10 @@ from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
 import mpd
 
-class MusicPlayeraemonEception(CluAgentException):
+class MpdClientEception(CluAgentException):
   pass
 
-class MusicPlayerDaemon(Configurable):
+class MpdClient(Configurable):
   """
   MPD client handler
   """
@@ -25,14 +25,14 @@ class MusicPlayerDaemon(Configurable):
       if self.config.password is not None:
         self.mpd.password(self.config.password)
     except mpd.ConnectionError, connex:
-      raise MusicPlayeraemonEception("Connection error on connect", connex)
+      raise MpdClientEception("Connection error on connect", connex)
     except mpd.CommandError, authex:
-      raise MusicPlayeraemonEception("Authentcation error on connect", authex)
+      raise MpdClientEception("Authentcation error on connect", authex)
     except mpd.MPDError, unknownex:
-      raise MusicPlayeraemonEception("Unknown MPD error on connect", unknownex)
+      raise MpdClientEception("Unknown MPD error on connect", unknownex)
   
   def disconnect(self):
     try:
       self.mpd.disconnect()
     except mpd.MPDError, mpdexcept:
-      raise MusicPlayeraemonEception("MPD Error on disconnect", mpdexcept)
+      raise MpdClientEception("MPD Error on disconnect", mpdexcept)

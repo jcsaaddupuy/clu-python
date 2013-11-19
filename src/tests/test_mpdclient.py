@@ -4,20 +4,20 @@ from mock import Mock, MagicMock
 
 from clu.common.base import AutoConfigurableException
 from clu.agents import CluAgentException
-from clu.agents.mpd.musicplayerdaemon import MusicPlayerDaemon, MusicPlayeraemonEception
+from clu.agents.mpd.mpdclient import MpdClient, MpdClientEception
 from mpd import ConnectionError, CommandError, MPDError
 
 class MpdAgentTestCase(unittest.TestCase):
 
   def test_mpdagent_init_empty_params(self):
-    mpdagent = MusicPlayerDaemon()
+    mpdagent = MpdClient()
     self.assertTrue(mpdagent.config.host == "localhost")
     self.assertTrue(mpdagent.config.port == 6600)
     self.assertTrue(mpdagent.config.password is None)
 
   def test_mpdagent_init_with_mpd_conf(self):
     mpdconf={"host":"host","port":6601}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     self.assertTrue(mpdagent.config.host == "host")
     self.assertTrue(mpdagent.config.password is None)
@@ -27,7 +27,7 @@ class MpdAgentTestCase(unittest.TestCase):
 
   def test_mpdagent_connect_no_password(self):
     mpdconf={"host":"host","port":6600}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
@@ -39,7 +39,7 @@ class MpdAgentTestCase(unittest.TestCase):
 
   def test_mpdagent_connect_password(self):
     mpdconf={"host":"host","port":6600, "password":"password"}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
@@ -52,7 +52,7 @@ class MpdAgentTestCase(unittest.TestCase):
 
   def test_mpdagent_connect_bad_host_raises_mpdagentexception(self):
     mpdconf={"host":"badhost","port":6600}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
@@ -62,13 +62,13 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock.connect=connect
 
     # Call
-    with self.assertRaises(MusicPlayeraemonEception):
+    with self.assertRaises(MpdClientEception):
       mpdagent.connect()
 
 
   def test_mpdagent_disconnect_mpdexception_raises_mpdagentexception(self):
     mpdconf={"host":"badhost","port":6600}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
@@ -78,13 +78,13 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock.disconnect=disconnect
 
     # Call
-    with self.assertRaises(MusicPlayeraemonEception):
+    with self.assertRaises(MpdClientEception):
       mpdagent.disconnect()
 
 
   def test_mpdagent_connect_bad_password_raises_mpdagentexception(self):
     mpdconf={"host":"badhost","port":6600, "password":"bad_pass"}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
@@ -94,7 +94,7 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock.password=password
 
     # Call
-    with self.assertRaises(MusicPlayeraemonEception):
+    with self.assertRaises(MpdClientEception):
       mpdagent.connect()
 
     # Methods call assertions
@@ -103,7 +103,7 @@ class MpdAgentTestCase(unittest.TestCase):
 
   def test_mpdagent_connectexception_raises_mpdagentexception(self):
     mpdconf={"host":"badhost","port":6600}
-    mpdagent = MusicPlayerDaemon(mpdconf)
+    mpdagent = MpdClient(mpdconf)
 
     #Mock the mpd client
     mpdmock=Mock()
@@ -112,7 +112,7 @@ class MpdAgentTestCase(unittest.TestCase):
     connect=Mock(side_effect=MPDError())
     mpdmock.connect=connect
     # Call
-    with self.assertRaises(MusicPlayeraemonEception):
+    with self.assertRaises(MpdClientEception):
       mpdagent.connect()
 
     # Methods call assertions
