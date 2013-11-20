@@ -41,6 +41,13 @@ class CluAgent(object):
 
 from clu.common.base import Configurable
 class ConfigurableCluAgent(Configurable):
+  def __init__(self, config={}):
+    Configurable.__init__(self,config)
+    defaults={"name":""}
+    self.__defaults__(defaults)
+    #create a shortcut
+    self.name=self.config.name
+
   def before_execute(self):
     """Executed before the method execute. If this method fails, execute won't be called."""
     pass

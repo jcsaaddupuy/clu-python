@@ -1,6 +1,7 @@
 
 
 import test_common_base
+import test_configurableagent
 import test_clueagent
 
 import test_rabbitmqclient
@@ -16,11 +17,15 @@ import test_xbmcagent
 import test_telnetclient
 import test_telnetagent
 
+import test_configurator
+
 def suite():
     import unittest
     suite = unittest.TestSuite()
     suite.addTests(test_common_base.suite())
     suite.addTests(test_clueagent.suite())
+    
+    suite.addTests(test_configurableagent.suite())
     
     suite.addTests(test_rabbitmqclient.suite())
     suite.addTests(test_rabbitmqagent.suite())
@@ -35,6 +40,8 @@ def suite():
     
     suite.addTests(test_telnetclient.suite())
     suite.addTests(test_telnetagent.suite())
+    
+    suite.addTests(test_configurator.suite())
     return suite
 
 if __name__ == '__main__':# pragma: no cover
