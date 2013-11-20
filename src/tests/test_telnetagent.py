@@ -13,8 +13,8 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
     self.assertFalse(agent.telnet is None)
     self.assertTrue(agent.telnet.config.host == "telnet.lan")
     
-    self.assertFalse(agent.rmqagent is None)
-    self.assertTrue(agent.rmqagent.config.host == "rmq.lan")
+    self.assertFalse(agent.rmq is None)
+    self.assertTrue(agent.rmq.config.host == "rmq.lan")
   
   def test_telnetrmq_agent_telnetclient(self):
     """ Test that the telnetclient accessor returns the telnet.client instance """
@@ -36,7 +36,7 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methos wich are not tested here
     ignoredmocks=Mock()
     agent.telnet=ignoredmocks
-    agent.rmqagent=ignoredmocks
+    agent.rmq=ignoredmocks
     
 
     instance = mocked.return_value 
@@ -55,7 +55,7 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
     agent.telnet=ignoredmocks
-    agent.rmqagent=ignoredmocks
+    agent.rmq=ignoredmocks
     
 
     instance = mocked.return_value 
@@ -73,7 +73,7 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
     agent.telnet=ignoredmocks
-    agent.rmqagent=ignoredmocks
+    agent.rmq=ignoredmocks
     
     agent.telnet.disconnect.side_effect=Exception("In your face")
 
