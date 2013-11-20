@@ -5,6 +5,9 @@ from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
 import mpd
 
+import logging
+LOGGER=logging.getLogger(__name__)
+
 class MpdClientEception(CluAgentException):
   pass
 
@@ -20,19 +23,26 @@ class MpdClient(Configurable):
     self.client=mpd.MPDClient()
 
   def connect(self):
+    LOGGER.debug("Connect")
     try:
       self.client.connect(self.config.host, self.config.port)
       if self.config.password is not None:
+        LOGGER.debug("Authentication")
         self.client.password(self.config.password)
     except mpd.ConnectionError, connex:
+      LOGGER.exception("Error", connex)
       raise MpdClientEception("Connection error on connect", connex)
     except mpd.CommandError, authex:
+      LOGGER.exception("Error", authex)
       raise MpdClientEception("Authentcation error on connect", authex)
     except mpd.MPDError, unknownex:
+      LOGGER.exception("Error", unknownex)
       raise MpdClientEception("Unknown MPD error on connect", unknownex)
   
   def disconnect(self):
+    LOGGER.debug("MpdClient disconnect")
     try:
       self.client.disconnect()
     except mpd.MPDError, mpdexcept:
+      LOGGER.exception("Error on disconnect", mpdexcept)
       raise MpdClientEception("MPD Error on disconnect", mpdexcept)
