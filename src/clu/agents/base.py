@@ -59,7 +59,7 @@ class ConfigurableCluAgent(Configurable):
     """Executed after the method execute even if exceptions occurs"""
     pass
   def execute(self):
-    raise CluAgentNotImplementedException("Not implemented")
+    raise CluAgentNotImplementedException("Not implemented (%s)"%(self.__class__))
 
   def run(self):
     # If before_execute fails, raise the exception

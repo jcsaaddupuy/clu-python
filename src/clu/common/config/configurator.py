@@ -69,7 +69,7 @@ class Configurator(Configurable):
         raise ConfiguratorException(e)
 
 
-  def iniitalize_all(self):
+  def initalize_all(self):
     """ Load configure """
     agents_conf={}
     if self._loadedconfig.has_key("configs"):

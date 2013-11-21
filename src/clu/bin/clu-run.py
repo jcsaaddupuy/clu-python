@@ -2,12 +2,17 @@ from clu.probes.mpdprobestatus import MpdProbeStatus
 import logging
 
 logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.DEBUG)
 
-agentconf={"channel":{"exchange":"home.events","type":"topic"},"messages":{"routing_key":"home.events.multimedia.music.mpd.state"}}
-mpdconf={"host":"mpd.lan", "password":"password"}
-rmqconf={"host":"192.168.0.5", "user":"guest", "passwword":"guest"}
-agent=MpdProbeStatus(agentconf, mpdconf, rmqconf)
+from clu.common.config.configurator import Configurator, ConfiguratorException
+
+configurator= Configurator({"filename":"/home/jc/clu.conf"})
+
+configurator.loadfile()
+configurator.loadclasses()
+configurator.initalize_all()
+
 
 #Call
 while True:
-  agent.run()
+  configurator.agents[0].run()
