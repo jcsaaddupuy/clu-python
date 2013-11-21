@@ -6,6 +6,8 @@ LOGGER=logging.getLogger(__name__)
 import json
 from clu.common.base import Configurable
 import  importlib
+import inspect
+
 
 class ConfiguratorException(Exception):
   pass
@@ -17,6 +19,8 @@ class Configurator(Configurable):
     self.__defaults__(defaults)
     self._loadedconfig = None
     self.__clazzs__={}
+
+    self.agents=[]
 
   def loadfile(self):
     """ Load config file """
@@ -65,9 +69,25 @@ class Configurator(Configurable):
         raise ConfiguratorException(e)
 
 
-
-
-
-  def iniitalize(self, name, configurable):
+  def iniitalize_all(self):
     """ Load configure """
-    pass
+    agents_conf={}
+    if self._loadedconfig.has_key("configs"):
+      agents_conf=self._loadedconfig["configs"]
+    else:
+      LOGGER.debug("No config at all. All Agent will have efault values.")
+
+    for agent_name in self.__clazzs__:
+      LOGGER.debug("Initializing '%s'"%(agent_name))
+      conf={}
+      if agents_conf.has_key(agent_name):
+        conf = agents_conf[agent_name]
+        LOGGER.debug("Found conf for agent '%s'"%(agent_name))
+      else:
+        LOGGER.debug("No conf found for agent '%s'"%(agent_name))
+      # Here is the magic : get the Class instance
+      Clazz=self.__clazzs__[agent_name]
+      instance=Clazz(**conf)
+      # We have our instance.
+      self.agents.append(instance)
+      LOGGER.info("'%s' is fully loaded"%(agent_name))

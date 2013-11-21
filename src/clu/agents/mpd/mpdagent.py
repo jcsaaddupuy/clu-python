@@ -13,7 +13,7 @@ class MpdRmqException(Exception):
   pass
   
 class MpdRmqAgent(RabbitMqAgent):
-  def __init__(self, config, mpdconf={}, rmqconf={}):
+  def __init__(self, config={}, mpdconf={}, rmqconf={}):
     RabbitMqAgent.__init__(self,config,rmqconf)
     self.mpdclient=MpdClient(mpdconf)
     
