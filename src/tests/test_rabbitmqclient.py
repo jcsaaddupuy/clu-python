@@ -9,7 +9,7 @@ from clu.agents.rabbitmq.rabbitmqclient import RabbitmqClient, RabbitmqClientExc
 class RabbitmqClientTestCase(unittest.TestCase):
 
   def test_init_empty_params(self):
-    confgigurable = RabbitmqClient()
+    confgigurable = RabbitmqClient({})
   
   def test_init_host_param(self):
     config={"host":"host"}
