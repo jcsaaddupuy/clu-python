@@ -33,6 +33,10 @@ def load(classname):
     LOGGER.info("Loading class '%s'", agent_classname)
     clazz = getattr(module, agent_classname)
 
+    if type(clazz) != type:
+      raise ClassLoaderException("%s is not a type" % (clazz))
+
+
     return clazz
   except Exception, excep:
     raise ClassLoaderException(excep)

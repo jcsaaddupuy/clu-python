@@ -3,12 +3,14 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 from clu.common.config.configurator import Configurator
+from clu.common.config import classloader
+
 import  importlib
 
 
 class AgentConfiguratorException(Exception):
   """
-  Eceptions raised by AgentConfigurator
+  Exceptions raised by AgentConfigurator
   """
   pass
 
@@ -38,20 +40,9 @@ class AgentConfigurator(Configurator):
         raise AgentConfiguratorException("Could not find agent name in json config")
 
       try:
-        classparts = agent["classname"].split(".")
-
-        agent_classname = classparts[-1]
-        agent_module = ".".join(classparts[0:len(classparts)-1])
-
-        LOGGER.info("Loading module '%s'", agent_module)
-        module = importlib.import_module(agent_module)
-
-        LOGGER.info("Loading class '%s'", agent_classname)
-        clazz = getattr(module, agent_classname)
-
-        if type(clazz) != type:
-          raise AgentConfiguratorException("'%s' is not a type (%s)"%(agent_classname, type(clazz)))
-
+        classname = agent["classname"]
+        clazz = classloader.load(classname)
+        
         self.__clazzs__[agent["name"]] = clazz
       except Exception, ex:
         raise AgentConfiguratorException(ex)
@@ -75,7 +66,7 @@ class AgentConfigurator(Configurator):
         LOGGER.debug("No conf found for agent '%s'", agent_name)
       # Here is the magic : get the Class instance
       clazz = self.__clazzs__[agent_name]
-      instance = clazz(**conf)
+      instance = classloader.init(clazz, conf)
       # We have our instance.
       self.agents.append(instance)
       LOGGER.info("'%s' is fully loaded", agent_name)
