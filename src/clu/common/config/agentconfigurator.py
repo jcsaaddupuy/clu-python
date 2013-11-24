@@ -1,24 +1,28 @@
 """Module containing config classes helpers"""
-import os
 import logging
-LOGGER=logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
-import json
-from configurator import Configurator
+from clu.common.config.configurator import Configurator
 import  importlib
 
 
 class AgentConfiguratorException(Exception):
+  """
+  Eceptions raised by AgentConfigurator
+  """
   pass
 
 class AgentConfigurator(Configurator):
-  def __init__(self,config={}):
+  """
+  Class handling agent configuration
+  """
+  def __init__(self, config):
     Configurator.__init__(self, config)
-    defaults={"filename":None}
+    defaults = {"filename":None}
     self.__defaults__(defaults)
-    self.__clazzs__={}
+    self.__clazzs__ = {}
 
-    self.agents=[]
+    self.agents = []
 
   def loadclasses(self):
     """ Load classes from config """
@@ -34,44 +38,44 @@ class AgentConfigurator(Configurator):
         raise AgentConfiguratorException("Could not find agent name in json config")
 
       try:
-        classparts=agent["classname"].split(".")
+        classparts = agent["classname"].split(".")
 
-        agent_classname= classparts[-1]
-        agent_module= ".".join(classparts[0:len(classparts)-1])
+        agent_classname = classparts[-1]
+        agent_module = ".".join(classparts[0:len(classparts)-1])
 
-        LOGGER.info("Loading module '%s'"%(agent_module))
-        module=importlib.import_module(agent_module)
+        LOGGER.info("Loading module '%s'", agent_module)
+        module = importlib.import_module(agent_module)
 
-        LOGGER.info("Loading class '%s'"%(agent_classname))
-        clazz=getattr(module, agent_classname)
-        
+        LOGGER.info("Loading class '%s'", agent_classname)
+        clazz = getattr(module, agent_classname)
+
         if type(clazz) != type:
           raise AgentConfiguratorException("'%s' is not a type (%s)"%(agent_classname, type(clazz)))
 
-        self.__clazzs__[agent["name"]]=clazz
-      except Exception, e:
-        raise AgentConfiguratorException(e)
+        self.__clazzs__[agent["name"]] = clazz
+      except Exception, ex:
+        raise AgentConfiguratorException(ex)
 
 
   def initalize_all(self):
     """ Load configure """
-    agents_conf={}
+    agents_conf = {}
     if self._loadedconfig.has_key("configs"):
-      agents_conf=self._loadedconfig["configs"]
+      agents_conf = self._loadedconfig["configs"]
     else:
       LOGGER.debug("No config at all. All Agent will have efault values.")
 
     for agent_name in self.__clazzs__:
-      LOGGER.debug("Initializing '%s'"%(agent_name))
-      conf={}
+      LOGGER.debug("Initializing '%s'", agent_name)
+      conf = {}
       if agents_conf.has_key(agent_name):
         conf = agents_conf[agent_name]
-        LOGGER.debug("Found conf for agent '%s'"%(agent_name))
+        LOGGER.debug("Found conf for agent '%s'", agent_name)
       else:
-        LOGGER.debug("No conf found for agent '%s'"%(agent_name))
+        LOGGER.debug("No conf found for agent '%s'", agent_name)
       # Here is the magic : get the Class instance
-      Clazz=self.__clazzs__[agent_name]
-      instance=Clazz(**conf)
+      clazz = self.__clazzs__[agent_name]
+      instance = clazz(**conf)
       # We have our instance.
       self.agents.append(instance)
-      LOGGER.info("'%s' is fully loaded"%(agent_name))
+      LOGGER.info("'%s' is fully loaded", agent_name)

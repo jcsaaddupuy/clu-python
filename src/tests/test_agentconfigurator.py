@@ -142,7 +142,6 @@ class AgentConfiguratorTestCase(unittest.TestCase):
     agentconf='{"config":%s, "mpdconf": %s, "rmqconf":%s}'%(agentconfstr, mpdconfstr, rmqconfstr)
     full_conf = '{"agents":[{"name":"mpdstatus", "classname":"clu.agents.mpd.mpdagent.MpdRmqAgent"}],"configs":{"mpdstatus":%s}}'%(agentconf)
     m = mock_open(read_data = full_conf)
-    print full_conf
 
     open_name = '%s.open' % "clu.common.config.configurator"
     with patch(open_name, m, create=True):
