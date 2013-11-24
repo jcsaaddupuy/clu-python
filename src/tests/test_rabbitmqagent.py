@@ -12,7 +12,7 @@ from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 class RabbitMqAgentTestCase(unittest.TestCase):
 
   def test_rabbitmqagent_init_empty_params(self):
-    rmqagent = RabbitMqAgent()
+    rmqagent = RabbitMqAgent({},{})
     self.assertFalse(rmqagent.config.channel is None)
     self.assertTrue(rmqagent.config.channel.type == "")
     self.assertTrue(rmqagent.config.channel.exchange == "")
@@ -24,7 +24,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
   
   def test_rabbitmqagent_config(self):
     conf={"channel":{"exchange":"ex","type":"type"},"messages":{"routing_key":"rt"}}
-    rmqagent = RabbitMqAgent(conf)
+    rmqagent = RabbitMqAgent(conf, {})
     self.assertFalse(rmqagent.config.channel is None)
     self.assertTrue(rmqagent.config.channel.type == "type")
     self.assertTrue(rmqagent.config.channel.exchange == "ex")
@@ -34,7 +34,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
 
   def test_rabbitmqagent_before_execute(self):
     conf={"channel":{"exchange":"ex","type":"type"}}
-    rmqagent = RabbitMqAgent()
+    rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
     rmqagent.rmq = rmq
@@ -46,7 +46,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
 
   
   def test_rabbitmqagent_ensure_after_execute(self):
-    rmqagent = RabbitMqAgent()
+    rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
     rmqagent.rmq = rmq
@@ -57,7 +57,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
   
   @patch.object(ConfigurableCluAgent,'before_execute')
   def test_rabbitmqagent_before_execute_call_super(self, method):
-    rmqagent = RabbitMqAgent()
+    rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
     rmqagent.rmq = rmq
@@ -69,7 +69,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
   
   @patch.object(ConfigurableCluAgent,'ensure_after_execute')
   def test_rabbitmqagent_ensure_after_execute_call_super(self, method):
-    rmqagent = RabbitMqAgent()
+    rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
     rmqagent.rmq = rmq
@@ -81,7 +81,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
   def test_rabbitmqagent_basicpublish(self):
     import json
     conf={"channel":{"exchange":"ex","type":"type"},"messages":{"routing_key":"rt"}}
-    rmqagent = RabbitMqAgent(conf)
+    rmqagent = RabbitMqAgent(conf, {})
 
     rmq = Mock()
     rmqagent.rmq = rmq
