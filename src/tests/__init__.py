@@ -17,7 +17,9 @@ import test_xbmcagent
 import test_telnetclient
 import test_telnetagent
 
+import test_classloader
 import test_configurator
+import test_agentconfigurator
 
 def suite():
     import unittest
@@ -41,7 +43,9 @@ def suite():
     suite.addTests(test_telnetclient.suite())
     suite.addTests(test_telnetagent.suite())
     
+    suite.addTests(test_classloader.suite())
     suite.addTests(test_configurator.suite())
+    suite.addTests(test_agentconfigurator.suite())
     return suite
 
 if __name__ == '__main__':# pragma: no cover

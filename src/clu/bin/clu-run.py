@@ -4,7 +4,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 #logging.basicConfig(level=logging.DEBUG)
 
-from clu.common.config.configurator import Configurator, ConfiguratorException
+from clu.common.config.agentconfigurator import AgentConfigurator, AgentConfiguratorException
 
 configurator= Configurator({"filename":"/home/jc/clu.conf"})
 
