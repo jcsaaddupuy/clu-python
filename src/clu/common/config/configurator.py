@@ -18,7 +18,7 @@ class Configurator(Configurable):
   """
   Class containing config file loading
   """
-  def __init__(self, config):
+  def __init__(self, config={}):
     Configurable.__init__(self, config)
     defaults = {"folder" : None, "filename" : None}
     self.__defaults__(defaults)

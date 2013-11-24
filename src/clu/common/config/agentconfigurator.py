@@ -18,7 +18,7 @@ class AgentConfigurator(Configurator):
   """
   Class handling agent configuration
   """
-  def __init__(self, config):
+  def __init__(self, config={}):
     Configurator.__init__(self, config)
     defaults = {"filename":None}
     self.__defaults__(defaults)

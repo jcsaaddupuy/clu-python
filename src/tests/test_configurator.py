@@ -9,7 +9,7 @@ class ConfiguratorTestCase(unittest.TestCase):
 
   def test_init_empty_params(self):
     """ Test Configurator with empty params """
-    co = Configurator({})
+    co = Configurator()
     self.assertTrue(co.config.filename is None)
     self.assertTrue(co.config.folder is None)
   

@@ -32,7 +32,7 @@ class AutoConfigurable(object):
 
 class Configurable(object):
   """ Class containing a 'config' attribute (AutoConfigurable)"""
-  def __init__(self, config):
+  def __init__(self, config = {}):
     self.config = AutoConfigurable(config)
 
   def __neededs__(self, needed = ()):
