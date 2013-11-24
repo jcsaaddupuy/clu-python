@@ -4,7 +4,7 @@ from mock import Mock, MagicMock
 
 from clu.common.base import AutoConfigurableException
 from clu.agents import CluAgentException
-from clu.agents.mpd.mpdclient import MpdClient, MpdClientEception
+from clu.agents.mpd.mpdclient import MpdClient, MpdClientException
 from mpd import ConnectionError, CommandError, MPDError
 
 class MpdAgentTestCase(unittest.TestCase):
@@ -62,7 +62,7 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock.connect=connect
 
     # Call
-    with self.assertRaises(MpdClientEception):
+    with self.assertRaises(MpdClientException):
       mpdclient.connect()
 
 
@@ -78,7 +78,7 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock.disconnect=disconnect
 
     # Call
-    with self.assertRaises(MpdClientEception):
+    with self.assertRaises(MpdClientException):
       mpdclient.disconnect()
 
 
@@ -94,7 +94,7 @@ class MpdAgentTestCase(unittest.TestCase):
     mpdmock.password=password
 
     # Call
-    with self.assertRaises(MpdClientEception):
+    with self.assertRaises(MpdClientException):
       mpdclient.connect()
 
     # Methods call assertions
@@ -112,7 +112,7 @@ class MpdAgentTestCase(unittest.TestCase):
     connect=Mock(side_effect=MPDError())
     mpdmock.connect=connect
     # Call
-    with self.assertRaises(MpdClientEception):
+    with self.assertRaises(MpdClientException):
       mpdclient.connect()
 
     # Methods call assertions

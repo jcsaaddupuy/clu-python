@@ -14,7 +14,7 @@ class RabbitmqClient(Configurable):
   """
   Rabbitmq client handler.
   """
-  def __init__(self, config):
+  def __init__(self, config={}):
     Configurable.__init__(self, config)
     defaults = {
         "host":"localhost",
