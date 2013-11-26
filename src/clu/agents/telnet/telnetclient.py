@@ -7,6 +7,9 @@ import telnetlib
 
 
 class TelnetClientException(CluAgentException):
+  """
+  Exceptions raised by TelnetClient
+  """
   pass
 
 class TelnetClient(Configurable):
@@ -17,16 +20,16 @@ class TelnetClient(Configurable):
     Configurable.__init__(self, config)
     defaults={"host":"localhost", "port":23}
     self.__defaults__(defaults)
-    self.client=None
+    self.client = None
 
   def connect(self):
     """ Connect the client """
     try:
-      # constructor try to estalish a connection
-      self.client=telnetlib.Telnet(self.config.host, self.config.port)
+      # the constructor try to estalish a connection
+      self.client = telnetlib.Telnet(self.config.host, self.config.port)
       self.client.open()
-    except Exception, e:
-      raise TelnetClientException(e)
+    except Exception, ex:
+      raise TelnetClientException(ex)
 
   def disconnect(self):
     """ Disconnect the client """

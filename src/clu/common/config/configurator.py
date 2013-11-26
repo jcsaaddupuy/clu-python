@@ -33,14 +33,15 @@ class Configurator(Configurable):
       raise ConfiguratorException("Config folder is not defined")
     if self.config.filename is None:
       raise ConfiguratorException("Config file is not defined")
-    if not os.path.exists(self.config.filename):
+    
+    fullfilenane = os.path.join(self.config.folder, self.config.filename)
+    if not os.path.exists(fullfilenane):
       msg = "Config file '%s' does not exists" % (self.config.filename)
       raise ConfiguratorException(msg)
     LOGGER.info("Loading config file '%s'", self.config.filename)
     try:
-      fullfilenane = os.path.join(self.config.folder, self.config.filename)
       _file = open(fullfilenane, "r")
       self._loadedconfig = json.load(_file)
       _file.close()
-    except Exception, excep:
-      raise ConfiguratorException(excep)
+    except Exception, ex:
+      raise ConfiguratorException(ex)

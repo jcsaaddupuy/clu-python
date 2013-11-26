@@ -42,7 +42,8 @@ class Configurable(object):
 
   def __defaults__(self, defaults):
     for k in defaults:
-      if not self.config.__dict__.has_key(k):
+      # Set the value if not already present, override it if None
+      if not self.config.__dict__.has_key(k) or self.config.__dict__[k] is None:
         val = defaults[k]
         if type(val) == dict:
           self.config.__dict__[k] = AutoConfigurable(val)

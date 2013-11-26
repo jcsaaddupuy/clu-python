@@ -6,7 +6,16 @@ from clu.common.config.agentconfigurator import AgentConfigurator, AgentConfigur
 import os
 
 class AgentConfiguratorTestCase(unittest.TestCase):
+  def test_init_noparams(self):
+    """ Test AgentConfigurator with non existing file """
+    co = AgentConfigurator()
+    self.assertTrue(co.config.filename == "agents.json")
   
+  def test_init_params(self):
+    """ Test AgentConfigurator with non existing file """
+    co = AgentConfigurator({"filename":"afile", "folder" : "afolder"})
+    self.assertTrue(co.config.filename == "afile")
+    self.assertTrue(co.config.folder == "afolder")
 
   def test_loadclasses_config_not_loaded(self):
     """ Test AgentConfigurator with non existing file """

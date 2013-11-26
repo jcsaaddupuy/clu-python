@@ -5,14 +5,19 @@ logging.basicConfig(level=logging.INFO)
 #logging.basicConfig(level=logging.DEBUG)
 
 from clu.common.config.agentconfigurator import AgentConfigurator, AgentConfiguratorException
+from clu.common.runner.agentrunner import AgentRunner
 
-configurator= Configurator({"filename":"/home/jc/clu.conf"})
+
+configurator= AgentConfigurator({"folder":"/home/jc", "filename":"clu.conf"})
 
 configurator.loadfile()
 configurator.loadclasses()
 configurator.initalize_all()
 
+runners = []
 
-#Call
-while True:
-  configurator.agents[0].run()
+for agent in configurator.agents:
+  print agent
+  runner = AgentRunner(agent)
+  runners.append(runner)
+  runner.start()

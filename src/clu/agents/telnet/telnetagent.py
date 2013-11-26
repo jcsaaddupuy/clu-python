@@ -1,13 +1,18 @@
-#!/usr/bin/env python2
-
+""" Class containing Telnet/RabbitMq  classes"""
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
 from telnetclient import TelnetClient
 
 class TelnetRmqAgenException(Exception):
+  """
+  Exceptions raised by TelnetRmqAgenException
+  """
   pass
 
 class TelnetRmqAgent(RabbitMqAgent):
+  """
+  Telnet/RabbitMq client handler
+  """
   def __init__(self, config, telnetconf={}, rmqconf={}):
     RabbitMqAgent.__init__(self,config,rmqconf)
     self.telnet=TelnetClient(telnetconf)
@@ -23,13 +28,13 @@ class TelnetRmqAgent(RabbitMqAgent):
     ex=None
     try:
       RabbitMqAgent.ensure_after_execute(self)
-    except Exception, e:
-      raise TelnetRmqAgenException(e)
+    except Exception, ex:
+      raise TelnetRmqAgenException(ex)
     finally:
       try:
         self.telnet.disconnect()
-      except Exception, e2:
-        raise TelnetRmqAgenException(e2)
+      except Exception, ex2:
+        raise TelnetRmqAgenException(ex2)
 
 
   def telnetclient(self):

@@ -21,6 +21,8 @@ import test_classloader
 import test_configurator
 import test_agentconfigurator
 
+import test_agentrunner
+
 def suite():
     import unittest
     suite = unittest.TestSuite()
@@ -46,6 +48,8 @@ def suite():
     suite.addTests(test_classloader.suite())
     suite.addTests(test_configurator.suite())
     suite.addTests(test_agentconfigurator.suite())
+    
+    suite.addTests(test_agentrunner.suite())
     return suite
 
 if __name__ == '__main__':# pragma: no cover

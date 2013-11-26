@@ -20,7 +20,7 @@ class AgentConfigurator(Configurator):
   """
   def __init__(self, config={}):
     Configurator.__init__(self, config)
-    defaults = {"filename":None}
+    defaults = {"filename":"agents.json"}
     self.__defaults__(defaults)
     self.__clazzs__ = {}
 

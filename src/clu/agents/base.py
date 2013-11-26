@@ -63,7 +63,7 @@ class ConfigurableCluAgent(Configurable):
   """
   def __init__(self, config):
     Configurable.__init__(self, config)
-    defaults = {"name":""}
+    defaults = {"name":"", "scheduling":None}
     self.__defaults__(defaults)
     #create a shortcut
     self.name = self.config.name
