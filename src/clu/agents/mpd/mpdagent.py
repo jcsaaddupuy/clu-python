@@ -1,21 +1,22 @@
-#!/usr/bin/env python2
+import logging
+LOGGER = logging.getLogger(__name__)
+
+import sys
+
 from clu.common.base import Configurable
 from clu.agents import CluAgentException
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
-from mpdclient import MpdClient
-import mpd
+from clu.agents.mpd.mpdclient import MpdClient
 
-import logging
-LOGGER=logging.getLogger(__name__)
 
 class MpdRmqException(Exception):
   pass
   
 class MpdRmqAgent(RabbitMqAgent):
   def __init__(self, config={}, mpdconf={}, rmqconf={}):
-    RabbitMqAgent.__init__(self,config,rmqconf)
-    self.mpdclient=MpdClient(mpdconf)
+    RabbitMqAgent.__init__(self, config, rmqconf)
+    self.mpdclient = MpdClient(mpdconf)
     
     
   def before_execute(self):
@@ -31,13 +32,13 @@ class MpdRmqAgent(RabbitMqAgent):
     LOGGER.debug("ensure_after_execute")
     try:
       RabbitMqAgent.ensure_after_execute(self)
-    except Exception, e:
-      LOGGER.exception("Error on error calling parent ensure_after_execute", e)
-      raise MpdRmqException(e)
+    except Exception, ex:
+      LOGGER.error("Error on error calling parent ensure_after_execute")
+      raise MpdRmqException, MpdRmqException(ex), sys.exc_info()[2] # keep stacktrace
     finally:
       try:
         self.mpdclient.disconnect()
-      except Exception, e2:
-        LOGGER.exception("Error on error calling disconnect", e)
-        raise MpdRmqException(e2)
+      except Exception, ex2:
+        LOGGER.error("Error on error calling disconnect")
+        raise MpdRmqException, MpdRmqException(ex2), sys.exc_info()[2] # keep stacktrace
 

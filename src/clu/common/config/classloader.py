@@ -1,9 +1,9 @@
 """Module containing ClassLoader utils"""
-import  importlib
-
 import logging
 LOGGER = logging.getLogger(__name__)
+import sys
 
+import  importlib
 
 class ClassLoaderException(Exception):
   """
@@ -39,7 +39,8 @@ def load(classname):
 
     return clazz
   except Exception, excep:
-    raise ClassLoaderException(excep)
+    LOGGER.error("Error loading class")
+    raise ClassLoaderException, ClassLoaderException(excep), sys.exc_info()[2] # keep stacktrace
 
 def init(clazz, params):
   """
@@ -52,4 +53,5 @@ def init(clazz, params):
   try:
     return clazz(**params)
   except Exception, excep:
-    raise ClassLoaderException(excep)
+    LOGGER.error("Error Initializing class")
+    raise ClassLoaderException, ClassLoaderException(excep), sys.exc_info()[2] # keep stacktrace

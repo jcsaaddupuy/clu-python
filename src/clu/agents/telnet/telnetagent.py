@@ -1,7 +1,11 @@
 """ Class containing Telnet/RabbitMq  classes"""
+import logging
+LOGGER = logging.getLogger(__name__)
+import sys
+
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
-from telnetclient import TelnetClient
+from clu.agents.telnet.telnetclient import TelnetClient
 
 class TelnetRmqAgenException(Exception):
   """
@@ -14,8 +18,8 @@ class TelnetRmqAgent(RabbitMqAgent):
   Telnet/RabbitMq client handler
   """
   def __init__(self, config, telnetconf={}, rmqconf={}):
-    RabbitMqAgent.__init__(self,config,rmqconf)
-    self.telnet=TelnetClient(telnetconf)
+    RabbitMqAgent.__init__(self, config, rmqconf)
+    self.telnet = TelnetClient(telnetconf)
     
   def before_execute(self):
     RabbitMqAgent.before_execute(self)
@@ -25,16 +29,17 @@ class TelnetRmqAgent(RabbitMqAgent):
     RabbitMqAgent.after_execute(self)
   
   def ensure_after_execute(self):
-    ex=None
     try:
       RabbitMqAgent.ensure_after_execute(self)
     except Exception, ex:
-      raise TelnetRmqAgenException(ex)
+      LOGGER.error("Error calling RabbitMqAgent.ensure_after_execute")
+      raise TelnetRmqAgenException, TelnetRmqAgenException(ex), sys.exc_info()[2] # keep stacktrace
     finally:
       try:
         self.telnet.disconnect()
       except Exception, ex2:
-        raise TelnetRmqAgenException(ex2)
+        LOGGER.error("Error disconnecting telnet client")
+        raise TelnetRmqAgenException, TelnetRmqAgenException(ex2), sys.exc_info()[2] # keep stacktrace
 
 
   def telnetclient(self):

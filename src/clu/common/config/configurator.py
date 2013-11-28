@@ -1,7 +1,9 @@
 """Module containing config classes helpers"""
-import os
 import logging
 LOGGER = logging.getLogger(__name__)
+import sys
+
+import os
 
 import json
 from clu.common.base import Configurable
@@ -33,7 +35,7 @@ class Configurator(Configurable):
       raise ConfiguratorException("Config folder is not defined")
     if self.config.filename is None:
       raise ConfiguratorException("Config file is not defined")
-    
+
     fullfilenane = os.path.join(self.config.folder, self.config.filename)
     if not os.path.exists(fullfilenane):
       msg = "Config file '%s' does not exists" % (self.config.filename)
@@ -44,4 +46,5 @@ class Configurator(Configurable):
       self._loadedconfig = json.load(_file)
       _file.close()
     except Exception, ex:
-      raise ConfiguratorException(ex)
+      LOGGER.error("Error disconnecting telnet client")
+      raise ConfiguratorException, ConfiguratorException(ex), sys.exc_info()[2] # keep stacktrace

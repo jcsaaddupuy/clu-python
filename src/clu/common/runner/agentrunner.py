@@ -1,8 +1,9 @@
 """ Module containing agent runner """
-import time
 import logging
 LOGGER = logging.getLogger(__name__)
-from clu.common.base import Configurable
+import sys
+
+import threading
 
 class NoneScheduler(object):
   """
@@ -23,36 +24,43 @@ class AgentRunnerException(Exception):
   """  Exception raised by ModuleRunner """
   pass
 
-class LoopScheduler(object):
+class LoopScheduler(threading.Thread):
   """
   Execute an agent inside a loop
   """
-  def __init__(self, instance = None, wait = 0.5, max_retry = 3):
+  def __init__(self, instance = None, wait = 0.5, wait_on_error = 5, max_retry = None):
+    threading.Thread.__init__(self)
     self.wait = wait
+    self.wait_on_error = wait_on_error
     self.instance = instance
-    self.is_stopped = False
 
+    self._stopevent = threading.Event()
     self.max_retry = max_retry
     self.tryed = 0
+    LOGGER.info("LoopScheduler initialized")
 
-  def start(self):
+  def run(self):
     """ starts the agent """
     LOGGER.info("Starting LoopScheduler for '%s'", self.instance)
 
-    while not self.is_stopped and not self.max_retry_reached():
+    while not self._stopevent.isSet() and not self.max_retry_reached():
       self.tryed += 1
       try:
         self.instance.run()
+        self._stopevent.wait(self.wait)
       except Exception, ex:
-        LOGGER.error("Error while running agent (%s/%s). %s", self.tryed, self.max_retry, ex)
-      time.sleep(self.wait)
+        LOGGER.exception("Error while running agent (%s/%s).", self.tryed, "Unlimited" if self.max_retry is None else self.max_retry)
+        self._stopevent.wait(self.wait_on_error)
 
   def stop(self):
     """ Stop the agent """
-    self.is_stopped = True
+    LOGGER.info("Stoping LoopScheduler")
+    self._stopevent.set()
+    self._Thread__stop()
 
   def max_retry_reached(self):
-    return self.tryed >= self.max_retry
+    """ Return True if max errors reached """
+    return self.max_retry is not None and self.tryed >= self.max_retry
 
 SCHEDULERS = {
     None : NoneScheduler,
@@ -89,6 +97,7 @@ class AgentRunner(object):
 
     LOGGER.info("Starting '%s' with '%s' scheduler", self.instance.name, self.scheduler.__class__)
     self.scheduler.start()
+    return self.scheduler
 
 
   def stop(self):

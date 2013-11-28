@@ -1,6 +1,7 @@
 """Module containing config classes helpers"""
 import logging
 LOGGER = logging.getLogger(__name__)
+import sys
 
 from clu.common.config.configurator import Configurator
 from clu.common.config import classloader
@@ -45,7 +46,8 @@ class AgentConfigurator(Configurator):
         
         self.__clazzs__[agent["name"]] = clazz
       except Exception, ex:
-        raise AgentConfiguratorException(ex)
+        LOGGER.error("Error disconnecting telnet client")
+        raise AgentConfiguratorException, AgentConfiguratorException(ex), sys.exc_info()[2] # keep stacktrace
 
 
   def initalize_all(self):

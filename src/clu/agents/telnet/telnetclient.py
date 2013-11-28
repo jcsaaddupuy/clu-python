@@ -1,4 +1,7 @@
-#!/usr/bin/env python2
+import logging
+LOGGER = logging.getLogger(__name__)
+import sys
+
 from clu.common.base import Configurable
 from clu.agents import CluAgentException
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
@@ -18,7 +21,7 @@ class TelnetClient(Configurable):
   """
   def __init__(self, config={}):
     Configurable.__init__(self, config)
-    defaults={"host":"localhost", "port":23}
+    defaults = {"host":"localhost", "port":23}
     self.__defaults__(defaults)
     self.client = None
 
@@ -29,11 +32,13 @@ class TelnetClient(Configurable):
       self.client = telnetlib.Telnet(self.config.host, self.config.port)
       self.client.open()
     except Exception, ex:
-      raise TelnetClientException(ex)
+      LOGGER.error("Error connecting telnet client")
+      raise TelnetClientException, TelnetClientException(ex), sys.exc_info()[2] # keep stacktrace
 
   def disconnect(self):
     """ Disconnect the client """
     try:
       self.client.close()
-    except Exception, e:
-      raise TelnetClientException(e)
+    except Exception, ex:
+      LOGGER.error("Error disconnecting telnet client")
+      raise TelnetClientException, TelnetClientException(ex), sys.exc_info()[2] # keep stacktrace

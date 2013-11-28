@@ -1,11 +1,13 @@
 """ Module containing MPD client """
+import logging
+LOGGER = logging.getLogger(__name__)
+
+import sys
 from clu.common.base import Configurable
 from clu.agents import CluAgentException
 
 import mpd
 
-import logging
-LOGGER = logging.getLogger(__name__)
 
 class MpdClientException(CluAgentException):
   """ Exception raised by MPDClient """
@@ -28,21 +30,21 @@ class MpdClient(Configurable):
 
   def connect(self):
     """Connection method """
-    LOGGER.debug("Connect")
+    LOGGER.info("Connect MPD client")
     try:
       self.client.connect(self.config.host, self.config.port)
       if self.config.password is not None:
         LOGGER.debug("Authentication")
         self.client.password(self.config.password)
     except mpd.ConnectionError, connex:
-      LOGGER.exception(connex)
-      raise MpdClientException("Connection error on connect", connex)
+      LOGGER.error("Connection error on connect")
+      raise MpdClientException, MpdClientException(connex), sys.exc_info()[2] # keep stacktrace
     except mpd.CommandError, authex:
-      LOGGER.exception(authex)
-      raise MpdClientException("Authentcation error on connect", authex)
+      LOGGER.error("Authentcation error on connect")
+      raise MpdClientException, MpdClientException(authex), sys.exc_info()[2] # keep stacktrace
     except mpd.MPDError, unknownex:
-      LOGGER.exception(unknownex)
-      raise MpdClientException("Unknown MPD error on connect", unknownex)
+      LOGGER.error("Unknown MPD error on connect")
+      raise MpdClientException, MpdClientException(unknownex), sys.exc_info()[2] # keep stacktrace
 
   def disconnect(self):
     """
@@ -50,7 +52,12 @@ class MpdClient(Configurable):
     """
     LOGGER.debug("MpdClient disconnect")
     try:
-      self.client.disconnect()
+      if self.client is not None:
+        LOGGER.info("Disconnecting MPD client")
+        self.client.disconnect()
+      else:
+        LOGGER.debug("MPD client was None, didn't disconnected it.")
+
     except mpd.MPDError, mpdexcept:
-      LOGGER.exception(mpdexcept)
-      raise MpdClientException("MPD Error on disconnect", mpdexcept)
+      LOGGER.error("MPD Error on disconnect")
+      raise MpdClientException, MpdClientException(mpdexcept), sys.exc_info()[2] # keep stacktrace

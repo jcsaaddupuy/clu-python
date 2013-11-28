@@ -1,5 +1,10 @@
 """ Module containing bases class for agents """
+import logging
+LOGGER = logging.getLogger(__name__)
+import sys
+
 from clu.common.base import CluException
+
 
 class CluAgentException(CluException):
   """Exceptions raised by CluAgent """
@@ -40,7 +45,7 @@ class CluAgent(object):
     try:
       self.before_execute()
     except Exception, ex:
-      raise ex
+      raise CluAgentException, CluAgentException(ex), sys.exc_info()[2] # keep stacktrace
     # if execute() or after_execute() raise an exception,
     # try to call  ensure_after_execute().
     # if an exception is raised by ensure_after_execute(),
@@ -49,12 +54,12 @@ class CluAgent(object):
       self.execute()
       self.after_execute()
     except Exception, ex:
-      raise CluAgentException(ex)
+      raise CluAgentException, CluAgentException(ex), sys.exc_info()[2] # keep stacktrace
     finally:
       try:
         self.ensure_after_execute()
       except Exception, ex2:
-        raise CluAgentException(ex2)
+        raise CluAgentException, CluAgentException(ex2), sys.exc_info()[2] # keep stacktrace
 
 from clu.common.base import Configurable
 class ConfigurableCluAgent(Configurable):
@@ -87,7 +92,13 @@ class ConfigurableCluAgent(Configurable):
     try:
       self.before_execute()
     except Exception, ex:
-      raise ex
+      LOGGER.error(ex)
+      try:
+        self.ensure_after_execute()
+      except Exception, ex2:
+        LOGGER.exception(ex2)
+        raise CluAgentException, CluAgentException(ex2), sys.exc_info()[2] # keep stacktrace
+      raise CluAgentException, CluAgentException(ex), sys.exc_info()[2] # keep stacktrace
     # if execute() or after_execute() raise an exception,
     # try to call  ensure_after_execute().
     # if an exception is raised by ensure_after_execute(),
@@ -96,9 +107,11 @@ class ConfigurableCluAgent(Configurable):
       self.execute()
       self.after_execute()
     except Exception, ex:
-      raise CluAgentException(ex)
+      LOGGER.error(ex)
+      raise CluAgentException, CluAgentException(ex), sys.exc_info()[2] # keep stacktrace
     finally:
       try:
         self.ensure_after_execute()
       except Exception, ex2:
-        raise CluAgentException(ex2)
+        LOGGER.error(ex2)
+        raise CluAgentException, CluAgentException(ex2), sys.exc_info()[2] # keep stacktrace
