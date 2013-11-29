@@ -2,7 +2,6 @@
 from clu.agents import ConfigurableCluAgent
 from clu.agents.rabbitmq.rabbitmqclient import RabbitmqClient
 
-import json
 
 class RabbitMqAgent(ConfigurableCluAgent):
   """
@@ -17,15 +16,6 @@ class RabbitMqAgent(ConfigurableCluAgent):
     self.__defaults__(defaults)
     self.rmq = RabbitmqClient(rmqconf)
 
-  def before_execute(self):
-    try:
-      ConfigurableCluAgent.before_execute(self)
-    finally:
-      self.rmq.connect()
-      channel = self.rmqchannel()
-      channel.exchange_declare(exchange=self.config.channel.exchange,
-        type=self.config.channel.type)
-      #
 
   def ensure_after_execute(self):
     try:
@@ -33,19 +23,8 @@ class RabbitMqAgent(ConfigurableCluAgent):
     finally:
       self.rmq.disconnect()
 
-  def rmqchannel(self):
-    """
-    Return the rmq channel
-    """
-    return self.rmq.channel
+  def basic_publish(self, message):
+    self.rmq.basic_publish(self.config.channel.exchange, self.config.channel.type, self.config.messages.routing_key, message)
 
-  def basic_publish(self, objmessage):
-    """
-    Publish on the rmq channel
-    """
-    message = json.dumps(objmessage)
-    channel = self.rmqchannel()
-    channel.basic_publish(exchange=self.config.channel.exchange,
-        routing_key=self.config.messages.routing_key,
-        body=message)
-    #
+  def basic_publish_json(self, message):
+    self.rmq.basic_publish_json(self.config.channel.exchange, self.config.channel.type, self.config.messages.routing_key, message)

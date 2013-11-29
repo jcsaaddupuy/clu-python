@@ -15,5 +15,5 @@ class MpdProbeStatus(MpdRmqAgent):
     status=mpdclient.status()
     LOGGER.info("Got MPD status")
     LOGGER.debug("Status : '%s'"%(status))
-    self.basic_publish(status)
+    self.basic_publish_json(status)
     LOGGER.info("Published")

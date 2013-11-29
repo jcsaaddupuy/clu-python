@@ -28,7 +28,7 @@ class LoopScheduler(threading.Thread):
   """
   Execute an agent inside a loop
   """
-  def __init__(self, instance = None, wait = 0.5, wait_on_error = 5, max_retry = None):
+  def __init__(self, instance = None, wait = 0.001, wait_on_error = 5, max_retry = None):
     threading.Thread.__init__(self)
     self.wait = wait
     self.wait_on_error = wait_on_error

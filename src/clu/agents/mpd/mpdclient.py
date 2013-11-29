@@ -58,6 +58,8 @@ class MpdClient(Configurable):
       else:
         LOGGER.debug("MPD client was None, didn't disconnected it.")
 
+    except mpd.ConnectionError, e:
+      LOGGER.error("Error on error calling disconnect")
     except mpd.MPDError, mpdexcept:
       LOGGER.error("MPD Error on disconnect")
       raise MpdClientException, MpdClientException(mpdexcept), sys.exc_info()[2] # keep stacktrace

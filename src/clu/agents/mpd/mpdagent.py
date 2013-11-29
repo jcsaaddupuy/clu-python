@@ -8,6 +8,7 @@ from clu.agents import CluAgentException
 from clu.agents.rabbitmq.rabbitmqagent import RabbitMqAgent
 
 from clu.agents.mpd.mpdclient import MpdClient
+import mpd
 
 
 class MpdRmqException(Exception):
