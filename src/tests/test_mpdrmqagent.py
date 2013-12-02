@@ -14,8 +14,8 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     self.assertTrue(agent.mpdclient.config.host == "mpd.lan")
     self.assertFalse(agent.mpdclient.client is None)
     
-    self.assertFalse(agent.rmq is None)
-    self.assertTrue(agent.rmq.config.host == "rmq.lan")
+    self.assertFalse(agent.rmqclient is None)
+    self.assertTrue(agent.rmqclient.config.host == "rmq.lan")
   
   def test_mpdrmq_agent_run_call_connect(self):
     agentconf={}
@@ -27,7 +27,7 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     agent.mpdclient=mpdmock
 
     rmqmock=Mock()
-    agent.rmq=rmqmock
+    agent.rmqclient=rmqmock
     # Mock the execute method to get rid of Not implemented exceptions
     execute=Mock()
     agent.execute=execute
@@ -49,7 +49,7 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methos wich are not tested here
     ignoredmocks=Mock()
     agent.mpdclient=ignoredmocks
-    agent.rmq=ignoredmocks
+    agent.rmqclient=ignoredmocks
     
 
     instance = mocked.return_value 
@@ -68,7 +68,7 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
     agent.mpdclient=ignoredmocks
-    agent.rmq=ignoredmocks
+    agent.rmqclient=ignoredmocks
     
 
     agent.after_execute()
@@ -85,7 +85,7 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
     agent.mpdclient=ignoredmocks
-    agent.rmq=ignoredmocks
+    agent.rmqclient=ignoredmocks
     
 
     mocked.side_effect=Exception("In your face")
@@ -104,8 +104,8 @@ class MpdRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
     agent.mpdclient=ignoredmocks
-    agent.rmq=ignoredmocks
-    agent.rmq.disconnect.side_effect=Exception("In your face")
+    agent.rmqclient=ignoredmocks
+    agent.rmqclient.disconnect.side_effect=Exception("In your face")
 
     with self.assertRaises(MpdRmqException):
       agent.ensure_after_execute()

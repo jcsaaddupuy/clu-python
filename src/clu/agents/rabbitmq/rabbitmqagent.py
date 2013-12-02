@@ -14,17 +14,17 @@ class RabbitMqAgent(ConfigurableCluAgent):
         "messages":{"routing_key":""}
         }
     self.__defaults__(defaults)
-    self.rmq = RabbitmqClient(rmqconf)
+    self.rmqclient = RabbitmqClient(rmqconf)
 
 
   def ensure_after_execute(self):
     try:
       ConfigurableCluAgent.ensure_after_execute(self)
     finally:
-      self.rmq.disconnect()
-
-  def basic_publish(self, message):
-    self.rmq.basic_publish(self.config.channel.exchange, self.config.channel.type, self.config.messages.routing_key, message)
+      self.rmqclient.disconnect()
 
   def basic_publish_json(self, message):
-    self.rmq.basic_publish_json(self.config.channel.exchange, self.config.channel.type, self.config.messages.routing_key, message)
+    real_message = {}
+    real_message["id"] = self.id
+    real_message["payload"] = message
+    self.rmqclient.basic_publish_json(self.config.channel.exchange, self.config.channel.type, self.config.messages.routing_key, real_message)

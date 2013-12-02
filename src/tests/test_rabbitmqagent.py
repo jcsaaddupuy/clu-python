@@ -20,7 +20,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     self.assertFalse(rmqagent.config.messages is None)
     self.assertTrue(rmqagent.config.messages.routing_key == "")
     
-    self.assertFalse(rmqagent.rmq is None)
+    self.assertFalse(rmqagent.rmqclient is None)
   
   def test_rabbitmqagent_config(self):
     conf={"channel":{"exchange":"ex","type":"type"},"messages":{"routing_key":"rt"}}
@@ -37,7 +37,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
-    rmqagent.rmq = rmq
+    rmqagent.rmqclient = rmq
 
     rmqagent.before_execute()
 
@@ -49,7 +49,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
-    rmqagent.rmq = rmq
+    rmqagent.rmqclient = rmq
 
     rmqagent.ensure_after_execute()
 
@@ -60,7 +60,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
-    rmqagent.rmq = rmq
+    rmqagent.rmqclient = rmq
 
     rmqagent.before_execute()
 
@@ -72,7 +72,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent = RabbitMqAgent({},{})
 
     rmq = Mock()
-    rmqagent.rmq = rmq
+    rmqagent.rmqclient = rmq
 
     rmqagent.ensure_after_execute()
 
@@ -84,13 +84,17 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent = RabbitMqAgent(conf, {})
 
     rmq = Mock()
-    rmqagent.rmq = rmq
+    rmqagent.rmqclient = rmq
     
     obj={"aa":1, "bb":{"cc":2}}
-    rmqagent.basic_publish(obj)
+    rmqagent.basic_publish_json(obj)
 
-    message=json.dumps(obj)
-    rmq.channel.basic_publish.assert_called_once_with(exchange=conf["channel"]["exchange"], routing_key=conf["messages"]["routing_key"], body=message)
+    expected = {}
+    expected["id"] = rmqagent.id
+    expected["payload"] = obj
+    message=json.dumps(expected)
+    print message
+    rmq.channel.basic_publish_json.assert_called_once_with(exchange=conf["channel"]["exchange"], type =conf["channel"]["type"] ,routing_key=conf["messages"]["routing_key"], body=expected)
 
 
 def suite():

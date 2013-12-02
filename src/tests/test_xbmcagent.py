@@ -13,8 +13,8 @@ class XbmcRmqAgentTestCase(unittest.TestCase):
     self.assertFalse(agent.xbmc is None)
     self.assertTrue(agent.xbmc.config.host == "xbmc.lan")
     
-    self.assertFalse(agent.rmq is None)
-    self.assertTrue(agent.rmq.config.host == "rmq.lan")
+    self.assertFalse(agent.rmqclient is None)
+    self.assertTrue(agent.rmqclient.config.host == "rmq.lan")
   
   def test_xbmcrmq_agent_xbmcclient(self):
     """ Test that the xbmcclient accessor returns the xbmc.client instance """
@@ -36,7 +36,7 @@ class XbmcRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methos wich are not tested here
     ignoredmocks=Mock()
     agent.xbmc=ignoredmocks
-    agent.rmq=ignoredmocks
+    agent.rmqclient=ignoredmocks
     
 
     instance = mocked.return_value 
@@ -55,7 +55,7 @@ class XbmcRmqAgentTestCase(unittest.TestCase):
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
     agent.xbmc=ignoredmocks
-    agent.rmq=ignoredmocks
+    agent.rmqclient=ignoredmocks
     
 
     instance = mocked.return_value 

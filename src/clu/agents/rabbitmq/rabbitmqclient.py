@@ -72,14 +72,11 @@ class RabbitmqClient(Configurable):
     try:
       if self.is_connection_valid():
         LOGGER.info("Closing Rabbitmq connection")
-        if not (self._connection.is_closed or self._connection.is_closing):
-          self._connection.close()
-          self._connection = None
-          self._channel = None
-        else:
-          LOGGER.info("RabbitMq Connection was already closed or was closing.")
+        self._connection.close()
+        self._connection = None
+        self._channel = None
       else:
-        LOGGER.info("RabbitMq Connection was None, not closed")
+        LOGGER.info("RabbitMq Connection was already closed or was closing.")
     except Exception, ex:
       LOGGER.error("Error closing rabbitmq client connection")
       raise RabbitmqClientException, RabbitmqClientException(ex), sys.exc_info()[2] # keep stacktrace

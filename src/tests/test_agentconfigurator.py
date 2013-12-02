@@ -173,8 +173,8 @@ class AgentConfiguratorTestCase(unittest.TestCase):
       self.assertTrue(instance.mpdclient is not None)
       self.assertTrue(instance.mpdclient.config.host == "mpd.lan")
       
-      self.assertTrue(instance.rmq is not None)
-      self.assertTrue(instance.rmq.config.host == "rmq.lan")
+      self.assertTrue(instance.rmqclient is not None)
+      self.assertTrue(instance.rmqclient.config.host == "rmq.lan")
 
 def suite():
   loader = unittest.TestLoader()

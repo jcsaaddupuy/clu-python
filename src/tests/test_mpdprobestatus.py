@@ -20,8 +20,8 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     self.assertTrue(agent.mpdclient is not None)
     self.assertTrue(agent.mpdclient.config.host == "mpd.lan")
     
-    self.assertTrue(agent.rmq is not None)
-    self.assertTrue(agent.rmq.config.host == "rmq.lan")
+    self.assertTrue(agent.rmqclient is not None)
+    self.assertTrue(agent.rmqclient.config.host == "rmq.lan")
   
   
   def test_mpdrmq_statusagent_run_readstatus(self):
@@ -59,7 +59,7 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     ignoredmocks=Mock()
     agent.mpdclient.connect=ignoredmocks
     agent.mpdclient.disconnect=ignoredmocks
-    agent.rmq=ignoredmocks
+    agent.rmqclient=ignoredmocks
 
     #Call
     agent.run()
@@ -67,7 +67,7 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     #Tests
     mockedidle.assert_called_once_with()
     mockedstatus.assert_called_with()
-    agent.rmq.channel.basic_publish.assert_called_with(exchange=agentconf["channel"]["exchange"],routing_key=agentconf["messages"]["routing_key"],body=json.dumps(mpdstatus))
+    agent.rmqclient.channel.basic_publish.assert_called_with(exchange=agentconf["channel"]["exchange"],routing_key=agentconf["messages"]["routing_key"],body=json.dumps(mpdstatus))
 
 
 

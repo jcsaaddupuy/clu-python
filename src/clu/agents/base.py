@@ -68,10 +68,11 @@ class ConfigurableCluAgent(Configurable):
   """
   def __init__(self, config):
     Configurable.__init__(self, config)
-    defaults = {"name":"", "scheduling":None}
+    defaults = {"name":"", "id":None, "scheduling":None}
     self.__defaults__(defaults)
     #create a shortcut
     self.name = self.config.name
+    self.id = self.config.id
 
   def before_execute(self):
     """Executed before the method execute. If this method fails, execute won't be called."""

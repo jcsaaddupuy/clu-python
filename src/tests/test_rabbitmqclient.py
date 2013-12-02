@@ -44,7 +44,7 @@ class RabbitmqClientTestCase(unittest.TestCase):
     co = RabbitmqClient(config)
 
     co.connect()
-    self.assertFalse(co.channel is None)
+    self.assertFalse(co._channel is None)
 
 
     mockedcred.assert_called_with(config["user"], config["password"])
@@ -79,24 +79,33 @@ class RabbitmqClientTestCase(unittest.TestCase):
   def test_disconnect(self):
     conn = Mock()
     close = Mock()
+    
+    connection_valid = Mock()
+    connection_valid.return_value = True
+    conn.close=close
 
     config={"host":"host", "port":5656, "user":"user","password":"password"}
     co = RabbitmqClient(config)
-    co.connection=conn
-    conn.close=close
+    co.is_connection_valid = connection_valid
+    co._connection=conn
 
     co.disconnect()
-    close.assert_called()
+    close.assert_called_once_with()
+    self.assertTrue(co._connection is None)
+    self.assertTrue(co._channel is None)
   
   def test_disconnect_exception(self):
     conn = Mock()
     close = Mock()
     close.side_effect=Exception("In your face")
+    connection_valid = Mock()
+    connection_valid.return_value = True
 
     config={"host":"host", "port":5656, "user":"user","password":"password"}
     co = RabbitmqClient(config)
-    co.connection=conn
+    co._connection=conn
     conn.close=close
+    co.is_connection_valid = connection_valid
 
     with self.assertRaises(RabbitmqClientException):
       co.disconnect()
