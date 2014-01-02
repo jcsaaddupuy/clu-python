@@ -29,10 +29,10 @@ class TelnetClientAgentTestCase(unittest.TestCase):
     telnetclient = TelnetClient(telnetclientconf)
 
     telnetclient.connect()
-    mocked.assert_called_with(telnetclientconf["host"], telnetclientconf["port"])
-    telnetclient.client.open.assert_called_with()
+    mocked.assert_called_with()
+    telnetclient.client.open.assert_called_with(telnetclientconf["host"], telnetclientconf["port"])
   
-  @patch.object(telnetlib, 'Telnet')
+  @patch.object(telnetlib.Telnet, 'open')
   def test_telnetclient_connect_exception(self, mocked):
     """ Test connect() method with exception raised """
     mocked.side_effect=Exception("In your face")
@@ -43,10 +43,10 @@ class TelnetClientAgentTestCase(unittest.TestCase):
     with self.assertRaises(TelnetClientException):
       telnetclient.connect()
   
-  @patch.object(telnetlib, 'Telnet')
+  @patch.object(telnetlib.Telnet, 'close')
   def test_telnetclient_disconnect_exception(self, mocked):
-    """ Test connect() method with exception raised """
-    mocked.close.side_effect=Exception("In your face !")
+    """ Test disconnect() method with exception raised """
+    mocked.side_effect=Exception("In your face !")
 
     telnetclientconf={"host":"host","port":20000}
     telnetclient = TelnetClient(telnetclientconf)
@@ -62,7 +62,6 @@ class TelnetClientAgentTestCase(unittest.TestCase):
 
     # Call
     telnetclient.connect()
-    mocked.assert_called_with(telnetclientconf["host"], telnetclientconf["port"])
     telnetclient.disconnect()
     telnetclient.client.close.assert_called_with()
 

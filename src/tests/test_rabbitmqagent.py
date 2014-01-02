@@ -32,18 +32,6 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     self.assertFalse(rmqagent.config.messages is None)
     self.assertTrue(rmqagent.config.messages.routing_key == "rt")
 
-  def test_rabbitmqagent_before_execute(self):
-    conf={"channel":{"exchange":"ex","type":"type"}}
-    rmqagent = RabbitMqAgent({},{})
-
-    rmq = Mock()
-    rmqagent.rmqclient = rmq
-
-    rmqagent.before_execute()
-
-    rmq.connect.assert_called_once_with()
-    rmq.channel.exchange_declare(exchange=conf["channel"]["exchange"], type=conf["channel"]["type"])
-
   
   def test_rabbitmqagent_ensure_after_execute(self):
     rmqagent = RabbitMqAgent({},{})
@@ -54,18 +42,6 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     rmqagent.ensure_after_execute()
 
     rmq.disconnect.assert_called_once_with()
-  
-  @patch.object(ConfigurableCluAgent,'before_execute')
-  def test_rabbitmqagent_before_execute_call_super(self, method):
-    rmqagent = RabbitMqAgent({},{})
-
-    rmq = Mock()
-    rmqagent.rmqclient = rmq
-
-    rmqagent.before_execute()
-
-    method.assert_called_once_with(rmqagent)
-  
   
   @patch.object(ConfigurableCluAgent,'ensure_after_execute')
   def test_rabbitmqagent_ensure_after_execute_call_super(self, method):
@@ -93,8 +69,7 @@ class RabbitMqAgentTestCase(unittest.TestCase):
     expected["id"] = rmqagent.id
     expected["payload"] = obj
     message=json.dumps(expected)
-    print message
-    rmq.channel.basic_publish_json.assert_called_once_with(exchange=conf["channel"]["exchange"], type =conf["channel"]["type"] ,routing_key=conf["messages"]["routing_key"], body=expected)
+    rmq.basic_publish_json.assert_called_once_with(conf["channel"]["exchange"], conf["channel"]["type"], conf["messages"]["routing_key"], expected)
 
 
 def suite():

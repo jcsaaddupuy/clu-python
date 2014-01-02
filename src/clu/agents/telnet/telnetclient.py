@@ -23,14 +23,12 @@ class TelnetClient(Configurable):
     Configurable.__init__(self, config)
     defaults = {"host":"localhost", "port":23}
     self.__defaults__(defaults)
-    self.client = None
+    self.client = telnetlib.Telnet()
 
   def connect(self):
     """ Connect the client """
     try:
-      # the constructor try to estalish a connection
-      self.client = telnetlib.Telnet(self.config.host, self.config.port)
-      self.client.open()
+      self.client.open(self.config.host, self.config.port)
     except Exception, ex:
       LOGGER.error("Error connecting telnet client")
       raise TelnetClientException, TelnetClientException(ex), sys.exc_info()[2] # keep stacktrace

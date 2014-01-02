@@ -65,6 +65,35 @@ class MpdAgentTestCase(unittest.TestCase):
     with self.assertRaises(MpdClientException):
       mpdclient.connect()
 
+  def test_mpdclient_disconnect_none_doesnt_raises(self):
+    """
+    Test that when a connection error is raised on disconnect
+    """
+    mpdconf={"host":"badhost","port":6600}
+    mpdclient = MpdClient(mpdconf)
+
+    #Mock the mpd client
+    mpdclient.client=None
+
+    # Call
+    mpdclient.disconnect()
+  
+  def test_mpdclient_disconnect_connectionexception_doesnt_raises(self):
+    """
+    Test that when a connection error is raised on disconnect no exception is raised
+    """
+    mpdconf={"host":"badhost","port":6600}
+    mpdclient = MpdClient(mpdconf)
+
+    #Mock the mpd client
+    mpdmock=Mock()
+    mpdclient.client=mpdmock
+    #Mock the connect method
+    disconnect=Mock(side_effect=ConnectionError())
+    mpdmock.disconnect=disconnect
+
+    # Call
+    mpdclient.disconnect()
 
   def test_mpdclient_disconnect_mpdexception_raises_mpdclientexception(self):
     mpdconf={"host":"badhost","port":6600}

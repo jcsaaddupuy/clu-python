@@ -19,11 +19,11 @@ class TelnetRmqAgent(RabbitMqAgent):
   """
   def __init__(self, config, telnetconf={}, rmqconf={}):
     RabbitMqAgent.__init__(self, config, rmqconf)
-    self.telnet = TelnetClient(telnetconf)
+    self.telnetclient = TelnetClient(telnetconf)
     
   def before_execute(self):
     RabbitMqAgent.before_execute(self)
-    self.telnet.connect()
+    self.telnetclient.connect()
 
   def after_execute(self):
     RabbitMqAgent.after_execute(self)
@@ -36,11 +36,8 @@ class TelnetRmqAgent(RabbitMqAgent):
       raise TelnetRmqAgenException, TelnetRmqAgenException(ex), sys.exc_info()[2] # keep stacktrace
     finally:
       try:
-        self.telnet.disconnect()
+        self.telnetclient.disconnect()
       except Exception, ex2:
         LOGGER.error("Error disconnecting telnet client")
         raise TelnetRmqAgenException, TelnetRmqAgenException(ex2), sys.exc_info()[2] # keep stacktrace
 
-
-  def telnetclient(self):
-    return self.telnet.client

@@ -16,6 +16,7 @@ import test_xbmcagent
 
 import test_telnetclient
 import test_telnetagent
+import test_telnetprobe
 
 import test_classloader
 import test_configurator
@@ -44,6 +45,7 @@ def suite():
     
     suite.addTests(test_telnetclient.suite())
     suite.addTests(test_telnetagent.suite())
+    suite.addTests(test_telnetprobe.suite())
     
     suite.addTests(test_classloader.suite())
     suite.addTests(test_configurator.suite())

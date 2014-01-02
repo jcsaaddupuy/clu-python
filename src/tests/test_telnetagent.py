@@ -10,20 +10,12 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
     telnetconf={"host":"telnet.lan"}
     rmqconf={"host":"rmq.lan"}
     agent=TelnetRmqAgent(agentconf, telnetconf, rmqconf)
-    self.assertFalse(agent.telnet is None)
-    self.assertTrue(agent.telnet.config.host == "telnet.lan")
+    self.assertFalse(agent.telnetclient is None)
+    self.assertTrue(agent.telnetclient.config.host == "telnet.lan")
     
     self.assertFalse(agent.rmqclient is None)
     self.assertTrue(agent.rmqclient.config.host == "rmq.lan")
   
-  def test_telnetrmq_agent_telnetclient(self):
-    """ Test that the telnetclient accessor returns the telnet.client instance """
-    agentconf={}
-    telnetconf={"host":"telnet.lan"}
-    rmqconf={"host":"rmq.lan"}
-    agent=TelnetRmqAgent(agentconf, telnetconf, rmqconf)
-    self.assertTrue(agent.telnet.client == agent.telnetclient())
-    
 
   @patch.object(RabbitMqAgent, 'before_execute')
   def test_telnetrmq_before_execute(self, mocked):
@@ -35,7 +27,7 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
 
     #Setup generic mock for others methos wich are not tested here
     ignoredmocks=Mock()
-    agent.telnet=ignoredmocks
+    agent.telnetclient=ignoredmocks
     agent.rmqclient=ignoredmocks
     
 
@@ -54,7 +46,7 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
 
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
-    agent.telnet=ignoredmocks
+    agent.telnetclient=ignoredmocks
     agent.rmqclient=ignoredmocks
     
 
@@ -72,10 +64,10 @@ class TelnetRmqAgentTestCase(unittest.TestCase):
 
     #Setup generic mock for others methods wich are not tested here
     ignoredmocks=Mock()
-    agent.telnet=ignoredmocks
+    agent.telnetclient=ignoredmocks
     agent.rmqclient=ignoredmocks
     
-    agent.telnet.disconnect.side_effect=Exception("In your face")
+    agent.telnetclient.disconnect.side_effect=Exception("In your face")
 
     with self.assertRaises(TelnetRmqAgenException):
       agent.ensure_after_execute()

@@ -59,7 +59,7 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     ignoredmocks=Mock()
     agent.mpdclient.connect=ignoredmocks
     agent.mpdclient.disconnect=ignoredmocks
-    agent.rmqclient=ignoredmocks
+    agent.basic_publish_json = Mock()
 
     #Call
     agent.run()
@@ -67,7 +67,7 @@ class MpdProbeStatusTestCase(unittest.TestCase):
     #Tests
     mockedidle.assert_called_once_with()
     mockedstatus.assert_called_with()
-    agent.rmqclient.channel.basic_publish.assert_called_with(exchange=agentconf["channel"]["exchange"],routing_key=agentconf["messages"]["routing_key"],body=json.dumps(mpdstatus))
+    agent.basic_publish_json.assert_called_with(mpdstatus)
 
 
 
